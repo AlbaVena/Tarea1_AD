@@ -1,13 +1,13 @@
 package entidades;
 
 public class Sesion {
-	private String usuActual;
+	private String usuActual = Perfil.INVITADO.toString();
 	private Perfil perfilActual = Perfil.INVITADO;
 	private boolean logueado;
 	
-	public Sesion(String usuActual, Perfil perfilActual, boolean logueado) {
+	public Sesion( Perfil perfilActual, boolean logueado) {
 		super();
-		this.usuActual = usuActual;
+		this.usuActual = perfilActual.name();
 		this.perfilActual = perfilActual;
 		this.logueado = logueado;
 	}
