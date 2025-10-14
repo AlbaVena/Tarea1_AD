@@ -1,0 +1,73 @@
+package entidades;
+
+import java.util.Set;
+
+public class Numero {
+	private long id;
+	private int orden;
+	private String nombre;
+	private double duracion;
+	private Espectaculo espectaculo;
+	private Set <Artista> artistas;
+	
+	public Numero(long id, int orden, String nombre, double duracion, Espectaculo espectaculo, Set<Artista> artistas) {
+		super();
+		this.id = id;
+		this.orden = orden;
+		this.nombre = nombre;
+		this.duracion = duracion;
+		this.espectaculo = espectaculo;
+		this.artistas = artistas;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public int getOrden() {
+		return orden;
+	}
+
+	public void setOrden(int orden) {
+		this.orden = orden;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public double getDuracion() {
+		return duracion;
+	}
+
+	public void setDuracion(double duracion) {
+		this.duracion = duracion;
+	}
+
+	public Espectaculo getEspectaculo() {
+		return espectaculo;
+	}
+
+	public void setEspectaculo(Espectaculo espectaculo) {
+		this.espectaculo = espectaculo;
+	}
+
+	public Set<Artista> getArtistas() {
+		return artistas;
+	}
+
+	public void setArtistas(Set<Artista> artistas) {
+		this.artistas = artistas;
+	}
+	
+	
+
+}
