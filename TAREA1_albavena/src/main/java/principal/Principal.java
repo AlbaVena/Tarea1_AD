@@ -124,7 +124,14 @@ public class Principal {
 		}
 		while(opcion != 5);
 	}
+	/**
+	 * METODOS:
+	 */
 
+	/**
+	 * Muestra el perfil de sesion activo.
+	 * @param actual
+	 */
 	public static void mostrarMenuSesion(Sesion actual) {
 		System.out.println("Menu " + actual.getPerfilActual() + ":");
 	}
