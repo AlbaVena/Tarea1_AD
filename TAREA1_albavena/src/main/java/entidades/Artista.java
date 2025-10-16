@@ -1,5 +1,7 @@
 package entidades;
 
+import java.security.KeyStore.Entry;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -56,4 +58,20 @@ public class Artista extends Persona {
 		this.numeros = numeros;
 	}
 
+	//Metodos 
+	public void mostrarFicha() {
+		if (apodo != null) {
+			System.out.println("Artista: "+nombre+"\nApodo: "+apodo+
+					"Especialidades:");
+			for (Especialidad especialidad : especialidades) {
+				System.out.println(especialidad);
+			}
+		}
+		else {
+			System.out.println("Artista: "+nombre+"\n");
+			for (Especialidad especialidad : especialidades) {
+				System.out.println(especialidad);
+			}
+	}
+}
 }
