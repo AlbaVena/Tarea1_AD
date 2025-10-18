@@ -1,6 +1,6 @@
 package entidades;
 
-public abstract class Persona {
+public class Persona {
 	protected long id;
 	protected String email;
 	protected String nombre;
@@ -16,6 +16,12 @@ public abstract class Persona {
 		this.nacionalidad = nacionalidad;
 		this.credenciales = credenciales;
 	}
+	
+	public Persona(String usuarioAdministrador, String contraseñaAdministrador) {
+		super();
+		this.credenciales = new Credenciales(usuarioAdministrador, contraseñaAdministrador);
+	}
+	
 
 
 	public long getId() {

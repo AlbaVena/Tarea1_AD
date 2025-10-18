@@ -1,19 +1,22 @@
 package entidades;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class Espectaculo {
 	private long id;
 	private String nombre;
 	private LocalDate fechaini;
 	private LocalDate fechafin;
+	private Set <Numero> numeros;
 	
-	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin) {
+	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin,Set<Numero> numeros ) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.fechaini = fechaini;
 		this.fechafin = fechafin;
+		this.numeros = numeros;
 	}
 	public long getId() {
 		return id;
@@ -39,6 +42,13 @@ public class Espectaculo {
 	public void setFechafin(LocalDate fechafin) {
 		this.fechafin = fechafin;
 	}
+	public Set<Numero> getNumeros() {
+		return numeros;
+	}
+	public void setNumeros(Set<Numero> numeros) {
+		this.numeros = numeros;
+	}
+	
 	
 	
 

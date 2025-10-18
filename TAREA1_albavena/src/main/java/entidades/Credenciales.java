@@ -13,6 +13,14 @@ public class Credenciales {
 		this.password = password;
 		this.perfil = perfil;
 	}
+	
+	public Credenciales(String nombreAdministrador, String passwordAdministrador) {
+		super();
+		this.id = -1;
+		this.nombre = nombreAdministrador;
+		this.password = passwordAdministrador;
+		this.perfil = Perfil.ADMIN;
+	}
 
 	public long getId() {
 		return id;
