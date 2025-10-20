@@ -1,9 +1,10 @@
 package entidades;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class Espectaculo {
+public class Espectaculo implements Serializable{
 	private long id;
 	private String nombre;
 	private LocalDate fechaini;
@@ -47,6 +48,11 @@ public class Espectaculo {
 	}
 	public void setNumeros(Set<Numero> numeros) {
 		this.numeros = numeros;
+	}
+	@Override
+	public String toString() {
+		return "Espectaculo [id=" + id + ", nombre=" + nombre + ", fechaini=" + fechaini + ", fechafin=" + fechafin
+				+ ", numeros=" + numeros + "]";
 	}
 	
 	

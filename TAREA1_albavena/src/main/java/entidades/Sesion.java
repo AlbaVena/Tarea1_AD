@@ -4,6 +4,13 @@ public class Sesion {
 	private Persona usuActual;
 	private Perfil perfilActual = Perfil.INVITADO;
 	
+	public Sesion(Persona usuActual) {
+		super();
+		this.usuActual = usuActual;
+		if (usuActual != null) {
+			perfilActual = usuActual.getPerfil();
+		}
+	}
 	
 	public Sesion() {
 		super();

@@ -11,13 +11,13 @@ public class Coordinador extends Persona {
 	private Set <Espectaculo> espectaculos;
 
 	public Coordinador(long id, String email, String nombre, String nacionalidad, Credenciales credenciales) {
-		super(id, email, nombre, nacionalidad, credenciales);
+		super(id, email, nombre, nacionalidad, credenciales, Perfil.COORDINACION);
 		// TODO Auto-generated constructor stub
 	}
 
 	public Coordinador(long id, String email, String nombre, String nacionalidad, Credenciales credenciales,
 			long idCoord, boolean senior, LocalDate fechasenior, Set <Espectaculo> espectaculos) {
-		super(id, email, nombre, nacionalidad, credenciales);
+		super(id, email, nombre, nacionalidad, credenciales, Perfil.COORDINACION);
 		this.idCoord = idCoord;
 		this.senior = senior;
 		this.fechasenior = fechasenior;

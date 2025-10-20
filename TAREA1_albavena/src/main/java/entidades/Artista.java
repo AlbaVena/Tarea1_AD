@@ -11,13 +11,13 @@ public class Artista extends Persona {
 
 	public Artista(long id, String email, String nombre, String nacionalidad,
 			Credenciales credenciales) {
-		super(id, email, nombre, nacionalidad, credenciales);
+		super(id, email, nombre, nacionalidad, credenciales, Perfil.ARTISTA);
 	}
 
 	public Artista(long id, String email, String nombre, String nacionalidad,
 			Credenciales credenciales, long idArt, String apodo,
 			Set<Especialidad> especialidades, List<Numero> numeros) {
-		super(id, email, nombre, nacionalidad, credenciales);
+		super(id, email, nombre, nacionalidad, credenciales, Perfil.ARTISTA);
 		this.idArt = idArt;
 		this.apodo = apodo;
 		this.especialidades = especialidades;
