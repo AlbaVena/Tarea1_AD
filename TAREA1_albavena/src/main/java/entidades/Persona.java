@@ -32,7 +32,7 @@ public class Persona {
 		this.email = propiedades[3];
 		this.nombre = propiedades[4];
 		this.nacionalidad = propiedades[5];
-		switch (propiedades[6].toLowerCase()) {
+		switch (propiedades[6].toLowerCase().trim()) {
 		case "artista":
 			this.perfil = Perfil.ARTISTA;
 			break;

@@ -13,8 +13,15 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.*;
 
 import entidades.Credenciales;
 import entidades.Persona;
@@ -28,7 +35,7 @@ public class Principal {
 
 	static Scanner leer = new Scanner(System.in);
 
-	static ArrayList<Persona> credencialesSistema =null;
+	static ArrayList<Persona> credencialesSistema = null;
 	static ArrayList<Espectaculo> espectaculos = null;
 	static ArrayList<String> paises = null;
 
@@ -37,22 +44,23 @@ public class Principal {
 	public static void main(String[] args) {
 
 		// Comenzamos configurando el programa
-		
+
 		cargarProperties();
 		credencialesSistema = cargarCredenciales();
 		espectaculos = cargarEspectaculos();
-		paises = cargarPaises();
+		Map<String, String> paises = cargarPaises();
 
 		Sesion actual = new Sesion();
-
+		
 		System.out.println("**Bienvenido al Circo**");
 
 		// MENU INVITADO
 		/**
 		 * 1. ver espectaculos 2. Log IN 3. Salir
 		 */
-		mostrarMenuSesion(actual);
+		
 		do {
+			mostrarMenuSesion(actual);
 			System.out.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. " + "Log IN\n\t3. Salir");
 			opcion = leer.nextInt();
 			leer.nextLine();
@@ -65,7 +73,7 @@ public class Principal {
 				if (usuarioIntento != null) {
 					actual = new Sesion(usuarioIntento);
 					switch (actual.getPerfilActual()) {
-					case ARTISTA: 
+					case ARTISTA:
 						menuArtista();
 						break;
 					case COORDINACION:
@@ -74,10 +82,10 @@ public class Principal {
 					case ADMIN:
 						menuAdmin();
 						break;
-						default: System.out.println("Perfil no reconocido");
+					default:
+						System.out.println("Perfil no reconocido");
 					}
-					// TODO meter aqui todos los menus
-					opcion = 3;
+
 				} else
 					System.out.println("usuario o contraseña incorrecto");
 
@@ -125,19 +133,52 @@ public class Principal {
 		}
 	}
 
-	private static ArrayList<String> cargarPaises() {
-		ArrayList<String> paises = new ArrayList<String>();
+	private static Map<String, String> cargarPaises() {
+		Map<String, String> paises = new HashMap<String, String>();
 
-		// TODO cargarPaises pero, en vez de linea por linea como un xml
+		try {
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document documento = builder.parse(ProgramProperties.paises);
+			documento.getDocumentElement().normalize();
+
+			NodeList listaPaises = documento.getElementsByTagName("pais"); // en la lista los elementos con etiqueta
+																			// "pais"
+			for (int i = 0; i < listaPaises.getLength(); i++) {
+				Node nodo = listaPaises.item(i); // me devuelve el nodo en posicion i
+
+				if (nodo.getNodeType() == Node.ELEMENT_NODE) { // devuelve un entero. solo los elementos tienen
+																// etiquetas hijo
+					Element elemento = (Element) nodo; // lo covertimos a element para usar los metodos <PAIS>
+
+					String id = getNodo("id", elemento);
+					String nombre = getNodo("nombre", elemento);
+
+					paises.put(id, nombre);
+
+				}
+
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 
 		return paises;
 	}
 
+	private static String getNodo(String etiqueta, Element elem) { //"etiqueta" concreta
+		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); //busca todas las qtiquetas hijas con el nombre de la etiqueta
+																	//devuelve los nodos hijos 
+		Node valorNodo = nodo.item(0); //primer hijo ID
+		return valorNodo.getNodeValue(); //el nodo de TEXTO (valor real) NOMBRE
+	}
+
 	private static ArrayList<Espectaculo> cargarEspectaculos() {
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
-		File archivo = new File (ProgramProperties.espectaculos);
+		File archivo = new File(ProgramProperties.espectaculos);
 		if (!archivo.exists()) {
-			try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ProgramProperties.espectaculos))){
+			try (ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream(ProgramProperties.espectaculos))) {
 				oos.writeObject(espectaculos);
 				oos.close();
 			} catch (FileNotFoundException e) {
@@ -147,11 +188,10 @@ public class Principal {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		else {
-			try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ProgramProperties.espectaculos))){
-				
-				espectaculos = (ArrayList <Espectaculo>) ois.readObject();
+		} else {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ProgramProperties.espectaculos))) {
+
+				espectaculos = (ArrayList<Espectaculo>) ois.readObject();
 				ois.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -163,7 +203,7 @@ public class Principal {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
+
 		}
 
 		return espectaculos;
@@ -200,7 +240,7 @@ public class Principal {
 
 			}
 		} catch (IOException e) {
-			System.out.println("No se ha podido cargar el fichero: "+ruta);
+			System.out.println("No se ha podido cargar el fichero: " + ruta);
 			e.printStackTrace();
 		}
 
@@ -276,6 +316,7 @@ public class Principal {
 			case 3:
 				break;
 			case 4:
+
 				break;
 			default:
 				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
