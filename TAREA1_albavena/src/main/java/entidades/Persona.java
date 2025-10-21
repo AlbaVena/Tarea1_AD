@@ -7,6 +7,10 @@ public class Persona {
 	protected String nacionalidad;
 	protected Credenciales credenciales;
 	protected Perfil perfil;
+	
+	public Persona() {
+		this.perfil = Perfil.INVITADO;
+	}
 
 	public Persona(long id, String email, String nombre, String nacionalidad, Credenciales credenciales,
 			Perfil perfil) {
@@ -19,9 +23,11 @@ public class Persona {
 		this.perfil = perfil;
 	}
 
+	// Constructor de administrador
 	public Persona(String usuarioAdministrador, String contraseñaAdministrador) {
 		super();
 		this.credenciales = new Credenciales(usuarioAdministrador, contraseñaAdministrador);
+		this.perfil = Perfil.ADMIN;
 	}
 
 	public Persona(String linea) {

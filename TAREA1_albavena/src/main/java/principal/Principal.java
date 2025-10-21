@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -39,8 +40,9 @@ public class Principal {
 	static ArrayList<Persona> credencialesSistema = null;
 	static ArrayList<Espectaculo> espectaculos = null;
 	static Map<String, String> paises = null;
+	static Sesion actual = new Sesion();
 
-	static int opcion = -1, opcion2 = -1;
+	
 
 	public static void main(String[] args) {
 
@@ -51,7 +53,6 @@ public class Principal {
 		espectaculos = cargarEspectaculos();
 		Map<String, String> paises = cargarPaises();
 
-		Sesion actual = new Sesion();
 
 		System.out.println("**Bienvenido al Circo**");
 
@@ -59,7 +60,7 @@ public class Principal {
 		/**
 		 * 1. ver espectaculos 2. Log IN 3. Salir
 		 */
-
+		int opcion = -1;
 		do {
 			mostrarMenuSesion(actual);
 			System.out.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. " + "Log IN\n\t3. Salir");
@@ -75,10 +76,10 @@ public class Principal {
 					actual = new Sesion(usuarioIntento);
 					switch (actual.getPerfilActual()) {
 					case ARTISTA:
-						menuArtista(actual);
+						menuArtista();
 						break;
 					case COORDINACION:
-						menuCoordinacion(actual);
+						menuCoordinacion();
 						break;
 					case ADMIN:
 						menuAdmin();
@@ -272,7 +273,8 @@ public class Principal {
 	}
 	
 	public static void logOut() {
-
+		System.out.println("Has cerrado la sesion");
+		actual.setUsuActual(new Persona());
 	}
 
 	// MENUS
@@ -281,7 +283,8 @@ public class Principal {
 	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar espectaculo
 	 * 2.2 crear-modificar numero 2.3 asignar artistas 3. Log OUT
 	 */
-	public static void menuCoordinacion(Sesion actual) {
+	public static void menuCoordinacion() {
+		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
 			System.out.println("Menu COORDINACION\nElige una opcion: \n\t1. Ver espectaculos\n\t.2 "
@@ -308,8 +311,8 @@ public class Principal {
 	/**
 	 * 1. ver tu ficha 2. ver espectaculos 3. Log OUT
 	 */
-	public static void menuArtista(Sesion actual) {
-
+	public static void menuArtista() {
+		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
 			System.out.println(
@@ -325,8 +328,7 @@ public class Principal {
 			case 2:
 				break;
 			case 3:
-				System.out.println("Has cerrado la sesion");
-				actual.setPerfilActual(Perfil.INVITADO);
+				logOut();
 
 				break;
 			default:
@@ -344,7 +346,7 @@ public class Principal {
 	 * gestionar datos artista-coordinador 4. Log OUT
 	 */
 	public static void menuAdmin() {
-		
+		int opcion = -1;
 
 		do {
 			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Gestionar espectaculos"
@@ -372,6 +374,7 @@ public class Principal {
 	}
 
 	public static void gestionarPersonas() {
+		int opcion2 = -1;
 		do {
 			System.out.println("Que deseas hacer?");
 			System.out.println("\t.1 Registrar persona\n\t.2 Asignar perfil y credenciales\n\t3."
@@ -380,6 +383,9 @@ public class Principal {
 			leer.nextLine();
 			switch (opcion2) {
 			case 1:
+				
+				Persona nueva = null; //hasta que persona no null o pulse salir
+				// do-while op1 registrar op2 salir
 				break;
 			case 2:
 				break;
@@ -395,6 +401,7 @@ public class Principal {
 	}
 
 	public static void gestionarEscpectaculos() {
+		int opcion2 = -1;
 		do {
 			System.out.println("Que deseas hacer?");
 			System.out.println("\t1. Crear o modificar un espectaculo\n\t2. " + "Crear o modificar un numero\n\t3. "
@@ -402,6 +409,7 @@ public class Principal {
 			opcion2 = leer.nextInt();
 			leer.nextLine();
 			switch (opcion2) {
+			
 			case 1:
 				break;
 			case 2:
@@ -415,4 +423,63 @@ public class Principal {
 			}
 		} while (opcion2 != 4);
 	}
+	
+	//registrar persona nueva
+	public Persona registrarPersona() {
+		Persona resultadoLogin = null;
+		String email, nombre, nacionalidad, nombreUsuario, password, perfil;
+		
+		System.out.println("introduce un email");
+		email = leer.nextLine();
+		if (comprobarEmail(email)) {
+			System.out.println("Ese email ya esta registrado");
+		}
+		
+		System.out.println("introduce un nombre de usuario");
+		nombreUsuario = leer.nextLine();
+		if (comprobarNombreUsuario(nombreUsuario)){
+			System.out.println("Ese nombre de usuario ya esta registrado");
+		}
+		
+		
+		System.out.println("introduce el id del pais");
+		for (Entry<String, String> entrada: paises.entrySet()) {
+			System.out.println(entrada);
+		}		
+		nacionalidad =  leer.nextLine();
+		if (paises.containsKey(nacionalidad)) {
+			nacionalidad = paises.get(nacionalidad);
+		}else {
+			System.out.println("Ese pais no se encuentra");
+			return null;
+		}
+		
+		
+		return resultadoLogin;
+	}
+
+	private Boolean comprobarEmail(String email) {
+		Boolean valido = true;
+		for(Persona p : credencialesSistema) {
+			if(p.getEmail() == email) { 
+				//TODO rellenar mensaje error
+				return false;
+			}
+		}
+		return valido;
+	}
+			
+		private Boolean comprobarNombreUsuario(String nombreUsuario) {
+			Boolean valido = true;
+			for(Persona p : credencialesSistema) {
+				if(p.getCredenciales().getNombre() == nombreUsuario) {
+				//TODO rellenar mensaje error
+				return false;
+			}
+		}
+		// Si no hemos fallado en ningún validador, construimos la Persona
+		// resultadoLogin = new Persona(..);
+		return valido;
+	}
+	
 }
