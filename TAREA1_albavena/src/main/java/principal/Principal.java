@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.*;
 
+import entidades.Artista;
 import entidades.Credenciales;
 import entidades.Persona;
 import entidades.Espectaculo;
@@ -37,7 +38,7 @@ public class Principal {
 
 	static ArrayList<Persona> credencialesSistema = null;
 	static ArrayList<Espectaculo> espectaculos = null;
-	static ArrayList<String> paises = null;
+	static Map<String, String> paises = null;
 
 	static int opcion = -1, opcion2 = -1;
 
@@ -51,14 +52,14 @@ public class Principal {
 		Map<String, String> paises = cargarPaises();
 
 		Sesion actual = new Sesion();
-		
+
 		System.out.println("**Bienvenido al Circo**");
 
 		// MENU INVITADO
 		/**
 		 * 1. ver espectaculos 2. Log IN 3. Salir
 		 */
-		
+
 		do {
 			mostrarMenuSesion(actual);
 			System.out.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. " + "Log IN\n\t3. Salir");
@@ -74,10 +75,10 @@ public class Principal {
 					actual = new Sesion(usuarioIntento);
 					switch (actual.getPerfilActual()) {
 					case ARTISTA:
-						menuArtista();
+						menuArtista(actual);
 						break;
 					case COORDINACION:
-						menuCoordinacion();
+						menuCoordinacion(actual);
 						break;
 					case ADMIN:
 						menuAdmin();
@@ -166,11 +167,12 @@ public class Principal {
 		return paises;
 	}
 
-	private static String getNodo(String etiqueta, Element elem) { //"etiqueta" concreta
-		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); //busca todas las qtiquetas hijas con el nombre de la etiqueta
-																	//devuelve los nodos hijos 
-		Node valorNodo = nodo.item(0); //primer hijo ID
-		return valorNodo.getNodeValue(); //el nodo de TEXTO (valor real) NOMBRE
+	private static String getNodo(String etiqueta, Element elem) { // "etiqueta" concreta
+		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); // busca todas las qtiquetas hijas
+																						// con el nombre de la etiqueta
+		// devuelve los nodos hijos
+		Node valorNodo = nodo.item(0); // primer hijo ID
+		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
 	}
 
 	private static ArrayList<Espectaculo> cargarEspectaculos() {
@@ -213,7 +215,7 @@ public class Principal {
 		ArrayList<Persona> personas = new ArrayList<>();
 		// incluimos el administrador
 		personas.add(new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin));
-		// TODO leer el fichero de credenciales
+		// leer el fichero de credenciales
 		ArrayList<String> lineas = leerFichero(ProgramProperties.credenciales);
 
 		for (String linea : lineas) {
@@ -268,6 +270,10 @@ public class Principal {
 		}
 		return usuarioLogueado;
 	}
+	
+	public static void logOut() {
+
+	}
 
 	// MENUS
 	// MENU COORDINACION
@@ -275,7 +281,8 @@ public class Principal {
 	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar espectaculo
 	 * 2.2 crear-modificar numero 2.3 asignar artistas 3. Log OUT
 	 */
-	public static void menuCoordinacion() {
+	public static void menuCoordinacion(Sesion actual) {
+		mostrarMenuSesion(actual);
 		do {
 			System.out.println("Menu COORDINACION\nElige una opcion: \n\t1. Ver espectaculos\n\t.2 "
 					+ "Crear o Modificar espectaculos\n\t3. Log OUT\n\t4. Salir");
@@ -301,28 +308,32 @@ public class Principal {
 	/**
 	 * 1. ver tu ficha 2. ver espectaculos 3. Log OUT
 	 */
-	public static void menuArtista() {
+	public static void menuArtista(Sesion actual) {
 
+		mostrarMenuSesion(actual);
 		do {
 			System.out.println(
-					"Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver " + "espectaculos\n\t3. Log OUT\n\t4. Salir");
+					"Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver " + "espectaculos\n\t3. Log OUT");
 			opcion = leer.nextInt();
 			leer.nextLine();
 			switch (opcion) {
 			case 1:
+				System.out.println("--Ficha del artista--\nNombre: "+actual.getUsuActual().getNombre()+
+						"\nID: "+actual.getUsuActual().getId());
+				
 				break;
 			case 2:
 				break;
 			case 3:
-				break;
-			case 4:
+				System.out.println("Has cerrado la sesion");
+				actual.setPerfilActual(Perfil.INVITADO);
 
 				break;
 			default:
 				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
 			}
 
-		} while (opcion != 4);
+		} while (opcion != 3);
 	}
 
 	// MENU ADMIN
@@ -333,6 +344,7 @@ public class Principal {
 	 * gestionar datos artista-coordinador 4. Log OUT
 	 */
 	public static void menuAdmin() {
+		
 
 		do {
 			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Gestionar espectaculos"
@@ -343,16 +355,11 @@ public class Principal {
 			case 1:
 				break;
 			case 2:
-				do {
-					System.out.println("Que deseas hacer?");
-					System.out.println("\t1. Crear o modificar un espectaculo\n\t2. "
-							+ "Crear o modificar un numero\n\t3. " + "Asignar artistas\n\t4. Salir");
-					opcion2 = leer.nextInt();
-					leer.nextLine();
-				} while (opcion2 != 4);
+				gestionarEscpectaculos();
 				break;
 
 			case 3:
+				gestionarPersonas();
 				break;
 			case 4:
 				break;
@@ -362,5 +369,50 @@ public class Principal {
 				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
 			}
 		} while (opcion != 5);
+	}
+
+	public static void gestionarPersonas() {
+		do {
+			System.out.println("Que deseas hacer?");
+			System.out.println("\t.1 Registrar persona\n\t.2 Asignar perfil y credenciales\n\t3."
+					+ "Gestionar datos artista o coordinador\n\t4. Salir");
+			opcion2 = leer.nextInt();
+			leer.nextLine();
+			switch (opcion2) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			default:
+				System.out.println("no has introducido una opcion valida.");
+			}
+
+		} while (opcion2 != 4);
+	}
+
+	public static void gestionarEscpectaculos() {
+		do {
+			System.out.println("Que deseas hacer?");
+			System.out.println("\t1. Crear o modificar un espectaculo\n\t2. " + "Crear o modificar un numero\n\t3. "
+					+ "Asignar artistas\n\t4. Salir");
+			opcion2 = leer.nextInt();
+			leer.nextLine();
+			switch (opcion2) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			default:
+				System.out.println("no has introducido una opcion valida.");
+			}
+		} while (opcion2 != 4);
 	}
 }

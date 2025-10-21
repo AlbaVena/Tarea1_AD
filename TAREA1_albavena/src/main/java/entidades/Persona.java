@@ -93,5 +93,6 @@ public class Persona {
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
 	}
+	
 
 }
