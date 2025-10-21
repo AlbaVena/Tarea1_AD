@@ -12,26 +12,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.*;
 
-import entidades.Artista;
-import entidades.Credenciales;
 import entidades.Persona;
+import entidades.Especialidad;
 import entidades.Espectaculo;
 import entidades.Perfil;
 import entidades.ProgramProperties;
 import entidades.Sesion;
-import util.MenuUtils;
 
 public class Principal {
 
@@ -42,8 +43,6 @@ public class Principal {
 	static Map<String, String> paises = null;
 	static Sesion actual = new Sesion();
 
-	
-
 	public static void main(String[] args) {
 
 		// Comenzamos configurando el programa
@@ -51,8 +50,7 @@ public class Principal {
 		cargarProperties();
 		credencialesSistema = cargarCredenciales();
 		espectaculos = cargarEspectaculos();
-		Map<String, String> paises = cargarPaises();
-
+		paises = cargarPaises();
 
 		System.out.println("**Bienvenido al Circo**");
 
@@ -271,7 +269,7 @@ public class Principal {
 		}
 		return usuarioLogueado;
 	}
-	
+
 	public static void logOut() {
 		System.out.println("Has cerrado la sesion");
 		actual.setUsuActual(new Persona());
@@ -315,15 +313,14 @@ public class Principal {
 		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
-			System.out.println(
-					"Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver " + "espectaculos\n\t3. Log OUT");
+			System.out.println("Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver " + "espectaculos\n\t3. Log OUT");
 			opcion = leer.nextInt();
 			leer.nextLine();
 			switch (opcion) {
 			case 1:
-				System.out.println("--Ficha del artista--\nNombre: "+actual.getUsuActual().getNombre()+
-						"\nID: "+actual.getUsuActual().getId());
-				
+				System.out.println("--Ficha del artista--\nNombre: " + actual.getUsuActual().getNombre() + "\nID: "
+						+ actual.getUsuActual().getId());
+
 				break;
 			case 2:
 				break;
@@ -348,6 +345,7 @@ public class Principal {
 	public static void menuAdmin() {
 		int opcion = -1;
 
+		mostrarMenuSesion(actual);
 		do {
 			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Gestionar espectaculos"
 					+ "\n\t3. Gestionar personas y credenciales" + "\n\t4. Log OUT" + "\n\t5. Salir");
@@ -375,6 +373,7 @@ public class Principal {
 
 	public static void gestionarPersonas() {
 		int opcion2 = -1;
+		Persona nueva;
 		do {
 			System.out.println("Que deseas hacer?");
 			System.out.println("\t.1 Registrar persona\n\t.2 Asignar perfil y credenciales\n\t3."
@@ -383,11 +382,15 @@ public class Principal {
 			leer.nextLine();
 			switch (opcion2) {
 			case 1:
-				
-				Persona nueva = null; //hasta que persona no null o pulse salir
+
+				do {
+					nueva = registrarPersona();
+				} while (nueva != null);
+				// hasta que persona no null o pulse salir
 				// do-while op1 registrar op2 salir
 				break;
 			case 2:
+
 				break;
 			case 3:
 				break;
@@ -409,7 +412,7 @@ public class Principal {
 			opcion2 = leer.nextInt();
 			leer.nextLine();
 			switch (opcion2) {
-			
+
 			case 1:
 				break;
 			case 2:
@@ -423,57 +426,161 @@ public class Principal {
 			}
 		} while (opcion2 != 4);
 	}
-	
-	//registrar persona nueva
-	public Persona registrarPersona() {
+
+	// registrar persona nueva
+	public static Persona registrarPersona() {
 		Persona resultadoLogin = null;
-		String email, nombre, nacionalidad, nombreUsuario, password, perfil;
-		
+		String email, nombre, nacionalidad;
+		String nombreUsuario = null, passUsuario = null;
+		Perfil perfilUsu;
+		Boolean senior = false;
+		String apodo = null;
+		LocalDate fecha = null;
+		Set<Especialidad> especialidadesUsu = new HashSet<>();
+
+		/**
+		 * DATOS PERSONALES
+		 */
 		System.out.println("introduce un email");
 		email = leer.nextLine();
-		if (comprobarEmail(email)) {
+		if (!comprobarEmail(email)) {
 			System.out.println("Ese email ya esta registrado");
+			return null;
 		}
-		
-		System.out.println("introduce un nombre de usuario");
-		nombreUsuario = leer.nextLine();
-		if (comprobarNombreUsuario(nombreUsuario)){
-			System.out.println("Ese nombre de usuario ya esta registrado");
-		}
-		
-		
-		System.out.println("introduce el id del pais");
-		for (Entry<String, String> entrada: paises.entrySet()) {
+		System.out.println("introduce el nombre de la persona");
+		nombre = leer.nextLine();
+
+		System.out.println("introduce el id del pais elegido");
+		for (Entry<String, String> entrada : paises.entrySet()) {
 			System.out.println(entrada);
-		}		
-		nacionalidad =  leer.nextLine();
+		}
+		nacionalidad = leer.nextLine().toUpperCase();
 		if (paises.containsKey(nacionalidad)) {
 			nacionalidad = paises.get(nacionalidad);
-		}else {
+		} else {
 			System.out.println("Ese pais no se encuentra");
 			return null;
 		}
+
+		/*
+		 * DATOS PROFESIONALES
+		 */
+		int num = -1;
+		do {
+			System.out.println("El usuario es Coordinador (1) o Artista (2)?");
+
+			num = leer.nextInt();
+			leer.nextLine();
+			switch (num) {
+			case 1:
+				//TODO arreglar menu coordinacion
+				perfilUsu = Perfil.COORDINACION;
+				int num2 = 0;
+				System.out.println("El coordinador es senior? (1- si , 2- no)");
+				num2 = leer.nextInt();
+				leer.nextLine();
+				switch (num2) {
+				case 1:
+					senior = true;
+					System.out.println("desde que fecha es senior? (formato yyyy-mm-dd)");
+					fecha = LocalDate.parse(leer.nextLine());
+					break;
+				case 2:
+					break;
+				default:
+					System.out.println("no has elegido una opcion valida");
+					break;
+				}
+				break;
+
+			case 2:
+				//TODO arreglar menu artista
+				perfilUsu = Perfil.ARTISTA;
+				System.out.println("el artista tiene apodo? (1-si , 2-no)");
+				int num3 = leer.nextInt();
+				leer.nextLine();
+				switch (num3) {
+				case 1:
+					System.out.println("cual es su apodo?");
+					apodo = leer.nextLine().trim().toLowerCase();
+					break;
+				case 2:
+					break;
+				default:
+					System.out.println("no has elegido una opcion valida");
+					break;
+				}
+				int i = 1;
+				System.out.println("indica sus especialidades separadas por comas: ");
+				for (Especialidad e : Especialidad.values()) {
+					System.out.println(i + "-" + e);
+					i++;
+				}
+				String[] seleccion = leer.nextLine().split(",");
+
+				for (String s : seleccion) {
+					int elegida = Integer.parseInt(s.trim());
+					switch (elegida) {
+					case 1 -> especialidadesUsu.add(Especialidad.ACROBACIA);
+					case 2 -> especialidadesUsu.add(Especialidad.HUMOR);
+					case 3 -> especialidadesUsu.add(Especialidad.MAGIA);
+					case 4 -> especialidadesUsu.add(Especialidad.EQUILIBRISMO);
+					case 5 -> especialidadesUsu.add(Especialidad.MALABARISMO);
+					default -> System.out.println("Has introducido una opcion invalida");
+					}
+				}
+
+				break;
+			default:
+				System.out.println("La opcion elegida no es valida");
+				break;
+			}
+		} while (num != 1 || num != 2);
+
+		/**
+		 * DATOS DE CREDENCIALES
+		 */
 		
+		do {
+			System.out.println("introduce el nombre de usuario (ten en cuenta que "
+					+ "no admitira letras con tildes o dieresis, ni espacios en blanco)");
+			String cadena = leer.nextLine().trim();
+			
+			if (cadena.matches("^[a-zA-Z_-]{3,}$")) {
+				nombreUsuario = cadena.toLowerCase();
+			}
+			else System.out.println("ese nombre de usuario no es valido");
+		}while (nombreUsuario == null);
+		
+		do {
+			System.out.println("por ultimo introduce una contraseña valida (debe"
+					+ " tener mas de 2 caracteres, y ningun espacio en blanco");
+			String pass = leer.nextLine();
+			if (pass.matches("^\\S{3,}$")) {
+				passUsuario = pass;
+			}
+			else System.out.println("contraseña no valida");
+		}while (passUsuario == null);
 		
 		return resultadoLogin;
 	}
 
-	private Boolean comprobarEmail(String email) {
+	public static Boolean comprobarEmail(String email) {
 		Boolean valido = true;
-		for(Persona p : credencialesSistema) {
-			if(p.getEmail() == email) { 
-				//TODO rellenar mensaje error
+		for (Persona p : credencialesSistema) {
+			if (p.getEmail() == email) {
+				// TODO rellenar mensaje error
 				return false;
 			}
 		}
 		return valido;
 	}
-			
-		private Boolean comprobarNombreUsuario(String nombreUsuario) {
-			Boolean valido = true;
-			for(Persona p : credencialesSistema) {
-				if(p.getCredenciales().getNombre() == nombreUsuario) {
-				//TODO rellenar mensaje error
+
+	public static Boolean comprobarNombreUsuario(String nombreUsuario) {
+		Boolean valido = true;
+		for (Persona p : credencialesSistema) {
+			if (p.getCredenciales().getNombre() == nombreUsuario) {
+				// TODO rellenar mensaje error
 				return false;
 			}
 		}
@@ -481,5 +588,20 @@ public class Principal {
 		// resultadoLogin = new Persona(..);
 		return valido;
 	}
-	
+
+	public static void asignarPerfilYCredenciales() {
+
+		String nombreUsuario, password, perfil;
+
+		// TODO coordinador senior-> fecha // artista -> apodo & especialidades
+
+		System.out.println("introduce un nombre de usuario");
+		nombreUsuario = leer.nextLine();
+		if (!comprobarNombreUsuario(nombreUsuario)) {
+			System.out.println("Ese nombre de usuario ya esta registrado");
+		}
+	}
+	/**
+	  
+	 */
 }

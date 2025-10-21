@@ -11,6 +11,7 @@ public class Persona {
 	public Persona() {
 		this.perfil = Perfil.INVITADO;
 	}
+	
 
 	public Persona(long id, String email, String nombre, String nacionalidad, Credenciales credenciales,
 			Perfil perfil) {
