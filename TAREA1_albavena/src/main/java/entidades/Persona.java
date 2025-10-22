@@ -12,6 +12,7 @@ public class Persona {
 		this.perfil = Perfil.INVITADO;
 	}
 	
+	
 
 	public Persona(long id, String email, String nombre, String nacionalidad, Credenciales credenciales,
 			Perfil perfil) {
@@ -100,6 +101,14 @@ public class Persona {
 	public void setPerfil(Perfil perfil) {
 		this.perfil = perfil;
 	}
+	
+	public String toFicheroCredenciales () {
+		 
+		return id+"|"+credenciales.getNombre()+"|"+credenciales.getPassword()+
+				"|"+email+"|"+nombre+"|"+nacionalidad+"|"+perfil;
+	}
+
+	
 	
 
 }

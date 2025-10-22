@@ -28,6 +28,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
 import entidades.Persona;
+import entidades.Credenciales;
 import entidades.Especialidad;
 import entidades.Espectaculo;
 import entidades.Perfil;
@@ -91,6 +92,7 @@ public class Principal {
 
 				break;
 			case 3:
+				System.out.println("Cerrando el programa...");
 				break;
 			default:
 				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
@@ -173,6 +175,14 @@ public class Principal {
 		Node valorNodo = nodo.item(0); // primer hijo ID
 		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
 	}
+	public static Espectaculo crearEspectaculo() {
+		Espectaculo nuevoEspectaculo = null;
+		if (actual.getPerfilActual()==Perfil.COORDINACION) {
+			
+		}
+		
+		return nuevoEspectaculo;
+	}
 
 	private static ArrayList<Espectaculo> cargarEspectaculos() {
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
@@ -212,8 +222,6 @@ public class Principal {
 
 	private static ArrayList<Persona> cargarCredenciales() {
 		ArrayList<Persona> personas = new ArrayList<>();
-		// incluimos el administrador
-		personas.add(new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin));
 		// leer el fichero de credenciales
 		ArrayList<String> lineas = leerFichero(ProgramProperties.credenciales);
 
@@ -262,9 +270,14 @@ public class Principal {
 			password = leer.nextLine();
 		} while (password == null);
 
-		for (Persona p : credenciales) {
-			if (p.getCredenciales().getNombre().equals(usuario) && p.getCredenciales().getPassword().equals(password)) {
-				usuarioLogueado = p;
+		if (usuario.equals(ProgramProperties.usuarioAdmin) && password.equals(ProgramProperties.passwordAdmin)) {
+			usuarioLogueado = new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin);
+		} else {
+			for (Persona p : credenciales) {
+				if (p.getCredenciales().getNombre().equals(usuario)
+						&& p.getCredenciales().getPassword().equals(password)) {
+					usuarioLogueado = p;
+				}
 			}
 		}
 		return usuarioLogueado;
@@ -373,11 +386,11 @@ public class Principal {
 
 	public static void gestionarPersonas() {
 		int opcion2 = -1;
-		Persona nueva;
+		Persona nueva = null;
 		do {
 			System.out.println("Que deseas hacer?");
-			System.out.println("\t.1 Registrar persona\n\t.2 Asignar perfil y credenciales\n\t3."
-					+ "Gestionar datos artista o coordinador\n\t4. Salir");
+			System.out.println("\t.1 Registrar persona\n\t.2"
+					+ "Gestionar datos artista o coordinador\n\t3. Salir");
 			opcion2 = leer.nextInt();
 			leer.nextLine();
 			switch (opcion2) {
@@ -385,7 +398,10 @@ public class Principal {
 
 				do {
 					nueva = registrarPersona();
-				} while (nueva != null);
+					nueva.setId(credencialesSistema.size()+1);
+					credencialesSistema.add(nueva);
+					persistirCredenciales();
+				} while (nueva == null);
 				// hasta que persona no null o pulse salir
 				// do-while op1 registrar op2 salir
 				break;
@@ -394,13 +410,12 @@ public class Principal {
 				break;
 			case 3:
 				break;
-			case 4:
-				break;
+
 			default:
 				System.out.println("no has introducido una opcion valida.");
 			}
 
-		} while (opcion2 != 4);
+		} while (opcion2 != 3);
 	}
 
 	public static void gestionarEscpectaculos() {
@@ -432,7 +447,7 @@ public class Principal {
 		Persona resultadoLogin = null;
 		String email, nombre, nacionalidad;
 		String nombreUsuario = null, passUsuario = null;
-		Perfil perfilUsu;
+		Perfil perfilUsu = null;
 		Boolean senior = false;
 		String apodo = null;
 		LocalDate fecha = null;
@@ -470,15 +485,17 @@ public class Principal {
 			System.out.println("El usuario es Coordinador (1) o Artista (2)?");
 
 			num = leer.nextInt();
+
 			leer.nextLine();
 			switch (num) {
 			case 1:
-				//TODO arreglar menu coordinacion
+				// TODO arreglar menu coordinacion
 				perfilUsu = Perfil.COORDINACION;
 				int num2 = 0;
 				System.out.println("El coordinador es senior? (1- si , 2- no)");
 				num2 = leer.nextInt();
 				leer.nextLine();
+
 				switch (num2) {
 				case 1:
 					senior = true;
@@ -486,6 +503,7 @@ public class Principal {
 					fecha = LocalDate.parse(leer.nextLine());
 					break;
 				case 2:
+					senior = false;
 					break;
 				default:
 					System.out.println("no has elegido una opcion valida");
@@ -494,17 +512,20 @@ public class Principal {
 				break;
 
 			case 2:
-				//TODO arreglar menu artista
+				// TODO arreglar menu artista
 				perfilUsu = Perfil.ARTISTA;
 				System.out.println("el artista tiene apodo? (1-si , 2-no)");
+
 				int num3 = leer.nextInt();
 				leer.nextLine();
+
 				switch (num3) {
 				case 1:
 					System.out.println("cual es su apodo?");
 					apodo = leer.nextLine().trim().toLowerCase();
 					break;
 				case 2:
+					apodo = null;
 					break;
 				default:
 					System.out.println("no has elegido una opcion valida");
@@ -540,29 +561,45 @@ public class Principal {
 		/**
 		 * DATOS DE CREDENCIALES
 		 */
-		
+
 		do {
 			System.out.println("introduce el nombre de usuario (ten en cuenta que "
 					+ "no admitira letras con tildes o dieresis, ni espacios en blanco)");
 			String cadena = leer.nextLine().trim();
-			
+
 			if (cadena.matches("^[a-zA-Z_-]{3,}$")) {
 				nombreUsuario = cadena.toLowerCase();
-			}
-			else System.out.println("ese nombre de usuario no es valido");
-		}while (nombreUsuario == null);
-		
+			} else
+				System.out.println("ese nombre de usuario no es valido");
+		} while (nombreUsuario == null);
+
 		do {
 			System.out.println("por ultimo introduce una contraseña valida (debe"
 					+ " tener mas de 2 caracteres, y ningun espacio en blanco");
 			String pass = leer.nextLine();
 			if (pass.matches("^\\S{3,}$")) {
 				passUsuario = pass;
+			} else
+				System.out.println("contraseña no valida");
+		} while (passUsuario == null);
+		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario, perfilUsu);		
+
+		return resultadoLogin = new Persona(-1, email, nombreUsuario, nacionalidad, credenciales, perfilUsu);
+	}
+	
+	public static void persistirCredenciales() {
+		try {
+			FileWriter writer = new FileWriter(ProgramProperties.credenciales);
+			for (Persona p : credencialesSistema) {
+				writer.write(p.toFicheroCredenciales());
 			}
-			else System.out.println("contraseña no valida");
-		}while (passUsuario == null);
-		
-		return resultadoLogin;
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//TODO 
 	}
 
 	public static Boolean comprobarEmail(String email) {
@@ -588,6 +625,8 @@ public class Principal {
 		// resultadoLogin = new Persona(..);
 		return valido;
 	}
+	
+	
 
 	public static void asignarPerfilYCredenciales() {
 
