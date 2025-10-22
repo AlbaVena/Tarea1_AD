@@ -11,7 +11,6 @@ public class Numero {
 	private Set <Artista> artistas;
 	
 	public Numero(long id, int orden, String nombre, double duracion, Espectaculo espectaculo, Set<Artista> artistas) {
-		super();
 		this.id = id;
 		this.orden = orden;
 		this.nombre = nombre;
@@ -20,6 +19,10 @@ public class Numero {
 		this.artistas = artistas;
 	}
 
+	public Numero (String nombre, double duracion) {
+		this.nombre = nombre;
+		this.duracion = duracion;
+	}
 	public long getId() {
 		return id;
 	}

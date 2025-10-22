@@ -10,14 +10,17 @@ public class Espectaculo implements Serializable{
 	private LocalDate fechaini;
 	private LocalDate fechafin;
 	private Set <Numero> numeros;
+	private Coordinador encargadoCoor;
 	
-	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin,Set<Numero> numeros ) {
+	public Espectaculo(long id, String nombre, LocalDate fechaini, LocalDate fechafin,Set<Numero> numeros, Coordinador encargadoCoor ) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
 		this.fechaini = fechaini;
 		this.fechafin = fechafin;
 		this.numeros = numeros;
+		this.setEncargadoCoor(encargadoCoor);
+		
 	}
 	public long getId() {
 		return id;
@@ -53,6 +56,12 @@ public class Espectaculo implements Serializable{
 	public String toString() {
 		return "Espectaculo [id=" + id + ", nombre=" + nombre + ", fechaini=" + fechaini + ", fechafin=" + fechafin
 				+ ", numeros=" + numeros + "]";
+	}
+	public Coordinador getEncargadoCoor() {
+		return encargadoCoor;
+	}
+	public void setEncargadoCoor(Coordinador encargadoCoor) {
+		this.encargadoCoor = encargadoCoor;
 	}
 	
 	

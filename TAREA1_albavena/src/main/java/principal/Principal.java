@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,9 +29,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
 import entidades.Persona;
+import entidades.Coordinador;
 import entidades.Credenciales;
 import entidades.Especialidad;
 import entidades.Espectaculo;
+import entidades.Numero;
 import entidades.Perfil;
 import entidades.ProgramProperties;
 import entidades.Sesion;
@@ -175,12 +178,127 @@ public class Principal {
 		Node valorNodo = nodo.item(0); // primer hijo ID
 		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
 	}
+
 	public static Espectaculo crearEspectaculo() {
-		Espectaculo nuevoEspectaculo = null;
-		if (actual.getPerfilActual()==Perfil.COORDINACION) {
-			
+		String nombre = null, nombrePrueba = null;
+		Boolean fechas = false;
+		LocalDate fechaIni = null, fechaFin = null;
+		Set<Numero> numeros = new HashSet<>();
+		long numCoor = -1;
+		Espectaculo nuevoEspectaculo;
+
+		if (actual.getPerfilActual() == Perfil.COORDINACION) {
+			do {
+				System.out.println("introduce el nombre del espectaculo" + "\n(debe tener un maximo de 25 caracteres)");
+				nombrePrueba = leer.nextLine();
+				if (nombrePrueba.length() <= 25 && !espectaculos.contains(nombrePrueba)) {
+					nombre = nombrePrueba;
+				} else {
+					System.out.println("ese nombre es demasiado largo o ya existe.");
+					nombre = null;
+				}
+			} while (nombre == null);
+			try {
+				do {
+					System.out.println("introduce la fecha de inicio (formato yyyy-mm-dd)");
+					String fecha1 = leer.nextLine();
+					fechaIni = LocalDate.parse(fecha1);
+
+					System.out.println(
+							"introduce la fecha de fin\n(recuerda que no puede pasar mas de 1 año entre fechas)");
+					String fecha2 = leer.nextLine();
+					fechaFin = LocalDate.parse(fecha2);
+
+					if (fechaFin.isBefore(fechaIni)) {
+						System.out.println("La fecha final no puede ser anterior a la inicial.");
+						fechas = false;
+					} else if (fechaFin.isAfter(fechaIni.plusYears(1))) {
+						System.out.println("El periodo no puede ser superior a 1 año.");
+						fechas = false;
+					} else {
+						fechas = true;
+					}
+				} while (fechas == false);
+			} catch (DateTimeParseException e) {
+				System.out.println("fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
+			}
+			Numero numero1 = new Numero("noche magica", 15.00);
+			Numero numero2 = new Numero("sonidos del aire", 12.5);
+			Numero numero3 = new Numero("baile del fuego", 18.5);
+			numeros.add(numero1);
+			numeros.add(numero2);
+			numeros.add(numero1);
+			long id = espectaculos.size() + 1;
+			Coordinador coordinadorActual = (Coordinador) actual.getUsuActual();
+			nuevoEspectaculo = new Espectaculo(id, nombre, fechaIni, fechaFin, numeros, coordinadorActual);
+			System.out.println("Espectaculo creado con exito.");
+		} else {
+			do {
+				System.out.println("introduce el nombre del espectaculo" + "\n(debe tener un maximo de 25 caracteres)");
+				nombrePrueba = leer.nextLine();
+				if (nombrePrueba.length() <= 25 && !espectaculos.contains(nombrePrueba)) {
+					nombre = nombrePrueba;
+				} else {
+					System.out.println("ese nombre es demasiado largo o ya existe.");
+					nombre = null;
+				}
+			} while (nombre == null);
+			try {
+				do {
+					System.out.println("introduce la fecha de inicio (formato yyyy-mm-dd)");
+					String fecha1 = leer.nextLine();
+					fechaIni = LocalDate.parse(fecha1);
+
+					System.out.println(
+							"introduce la fecha de fin\n(recuerda que no puede pasar mas de 1 año entre fechas)");
+					String fecha2 = leer.nextLine();
+					fechaFin = LocalDate.parse(fecha2);
+
+					if (fechaFin.isBefore(fechaIni)) {
+						System.out.println("La fecha final no puede ser anterior a la inicial.");
+						fechas = false;
+					} else if (fechaFin.isAfter(fechaIni.plusYears(1))) {
+						System.out.println("El periodo no puede ser superior a 1 año.");
+						fechas = false;
+					} else {
+						fechas = true;
+					}
+				} while (fechas == false);
+			} catch (DateTimeParseException e) {
+				System.out.println("fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
+			}
+			Numero numero1 = new Numero("noche magica", 15.00);
+			Numero numero2 = new Numero("sonidos del aire", 12.5);
+			Numero numero3 = new Numero("baile del fuego", 18.5);
+			numeros.add(numero1);
+			numeros.add(numero2);
+			numeros.add(numero1);
+			long id = espectaculos.size() + 1;
+
+			System.out.println("Elige un coordinador de los siguientes escribiendo su numero:");
+
+			for (Persona c : credencialesSistema) {
+				if (c.getPerfil() == Perfil.COORDINACION) {
+					System.out.println(c.getId() + " - " + c.getNombre());
+				}
+			}
+			numCoor = leer.nextLong();
+			leer.nextLine();
+			Coordinador coordinadorElegido = null;
+			for (Persona c : credencialesSistema) {
+				if (c.getPerfil() == Perfil.COORDINACION && c.getId() == numCoor) {
+					if (c instanceof Coordinador) {
+						coordinadorElegido = (Coordinador) c;
+
+					}
+				} else {
+					System.out.println("no se ha encontrado ese coordinador.");
+				}
+
+			}
+			nuevoEspectaculo = new Espectaculo(numCoor, nombre, fechaIni, fechaFin, numeros, coordinadorElegido);
 		}
-		
+
 		return nuevoEspectaculo;
 	}
 
@@ -306,6 +424,7 @@ public class Principal {
 			case 1:
 				break;
 			case 2:
+				crearEspectaculo();
 				break;
 			case 3:
 				break;
@@ -389,8 +508,7 @@ public class Principal {
 		Persona nueva = null;
 		do {
 			System.out.println("Que deseas hacer?");
-			System.out.println("\t.1 Registrar persona\n\t.2"
-					+ "Gestionar datos artista o coordinador\n\t3. Salir");
+			System.out.println("\t.1 Registrar persona\n\t.2" + "Gestionar datos artista o coordinador\n\t3. Salir");
 			opcion2 = leer.nextInt();
 			leer.nextLine();
 			switch (opcion2) {
@@ -398,12 +516,10 @@ public class Principal {
 
 				do {
 					nueva = registrarPersona();
-					nueva.setId(credencialesSistema.size()+1);
+					nueva.setId(credencialesSistema.size() + 1);
 					credencialesSistema.add(nueva);
 					persistirCredenciales();
 				} while (nueva == null);
-				// hasta que persona no null o pulse salir
-				// do-while op1 registrar op2 salir
 				break;
 			case 2:
 
@@ -429,6 +545,7 @@ public class Principal {
 			switch (opcion2) {
 
 			case 1:
+				crearEspectaculo();
 				break;
 			case 2:
 				break;
@@ -582,24 +699,23 @@ public class Principal {
 			} else
 				System.out.println("contraseña no valida");
 		} while (passUsuario == null);
-		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario, perfilUsu);		
+		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario, perfilUsu);
 
 		return resultadoLogin = new Persona(-1, email, nombreUsuario, nacionalidad, credenciales, perfilUsu);
 	}
-	
+
 	public static void persistirCredenciales() {
 		try {
 			FileWriter writer = new FileWriter(ProgramProperties.credenciales);
 			for (Persona p : credencialesSistema) {
 				writer.write(p.toFicheroCredenciales());
 			}
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//TODO 
+		// TODO
 	}
 
 	public static Boolean comprobarEmail(String email) {
@@ -625,8 +741,6 @@ public class Principal {
 		// resultadoLogin = new Persona(..);
 		return valido;
 	}
-	
-	
 
 	public static void asignarPerfilYCredenciales() {
 
