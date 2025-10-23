@@ -75,6 +75,13 @@ public class Numero implements Serializable{
 	public void setArtistas(Set<Artista> artistas) {
 		this.artistas = artistas;
 	}
+
+	@Override
+	public String toString() {
+		return "Numero id:" + id + ", nombre=" + nombre
+				+ ", duracion=" + duracion + ", espectaculo=" + espectaculo
+				+ ", artistas=" + artistas + "]";
+	}
 	
 	
 

@@ -67,7 +67,9 @@ public class Principal {
 		Boolean v = false;
 		do {
 			mostrarMenuSesion(actual);
-			System.out.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. " + "Log IN\n\t3. Salir");
+			System.out
+					.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. "
+							+ "Log IN\n\t3. Salir");
 
 			do {
 				try {
@@ -112,7 +114,8 @@ public class Principal {
 				System.out.println("Cerrando el programa...");
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida."
+						+ " Por favor intentalo de nuevo.");
 
 			}
 		} while (opcion != 3);
@@ -134,7 +137,8 @@ public class Principal {
 
 	private static void cargarProperties() {
 		Properties p = new Properties();
-		try (InputStream input = Principal.class.getClassLoader().getResourceAsStream("application.properties")) {
+		try (InputStream input = Principal.class.getClassLoader()
+				.getResourceAsStream("application.properties")) {
 			p.load(input);
 
 			ProgramProperties.usuarioAdmin = p.getProperty("usuarioAdmin");
@@ -146,7 +150,8 @@ public class Principal {
 		} catch (FileNotFoundException e) {
 			System.out.println("No pude encontrar el fichero de properties");
 		} catch (IOException e) {
-			System.out.println("Hubo problemas al leer el fichero de properties");
+			System.out
+					.println("Hubo problemas al leer el fichero de properties");
 		}
 	}
 
@@ -154,18 +159,32 @@ public class Principal {
 		Map<String, String> paises = new HashMap<String, String>();
 
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
 			Document documento = builder.parse(ProgramProperties.paises);
 			documento.getDocumentElement().normalize();
 
-			NodeList listaPaises = documento.getElementsByTagName("pais"); // en la lista los elementos con etiqueta
+			NodeList listaPaises = documento.getElementsByTagName("pais"); // en
+																			// la
+																			// lista
+																			// los
+																			// elementos
+																			// con
+																			// etiqueta
 																			// "pais"
 			for (int i = 0; i < listaPaises.getLength(); i++) {
-				Node nodo = listaPaises.item(i); // me devuelve el nodo en posicion i
+				Node nodo = listaPaises.item(i); // me devuelve el nodo en
+													// posicion i
 
-				if (nodo.getNodeType() == Node.ELEMENT_NODE) { // devuelve un entero. solo los elementos tienen
-																// etiquetas hijo
-					Element elemento = (Element) nodo; // lo covertimos a element para usar los metodos <PAIS>
+				if (nodo.getNodeType() == Node.ELEMENT_NODE) { // devuelve un
+																// entero. solo
+																// los elementos
+																// tienen
+																// etiquetas
+																// hijo
+					Element elemento = (Element) nodo; // lo covertimos a
+														// element para usar los
+														// metodos <PAIS>
 
 					String id = getNodo("id", elemento);
 					String nombre = getNodo("nombre", elemento);
@@ -178,15 +197,18 @@ public class Principal {
 		}
 
 		catch (Exception e) {
-			System.out.println("Ha ocurrido algun problema al leer el archivo XML.");
+			System.out.println(
+					"Ha ocurrido algun problema al leer el archivo XML.");
 		}
 
 		return paises;
 	}
 
-	private static String getNodo(String etiqueta, Element elem) { // "etiqueta" concreta
-		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); // busca todas las qtiquetas hijas
-																						// con el nombre de la etiqueta
+	private static String getNodo(String etiqueta, Element elem) { // "etiqueta"
+																	// concreta
+		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0)
+				.getChildNodes(); // busca todas las qtiquetas hijas
+									// con el nombre de la etiqueta
 		// devuelve los nodos hijos
 		Node valorNodo = nodo.item(0); // primer hijo ID
 		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
@@ -202,18 +224,23 @@ public class Principal {
 
 		if (actual.getPerfilActual() == Perfil.COORDINACION) {
 			do {
-				System.out.println("introduce el nombre del espectaculo" + "\n(debe tener un maximo de 25 caracteres)");
+				System.out.println("introduce el nombre del espectaculo"
+						+ "\n(debe tener un maximo de 25 caracteres)");
 				nombrePrueba = leer.nextLine();
-				if (nombrePrueba.length() <= 25 && !ProgramProperties.espectaculos.contains(nombrePrueba)) {
+				if (nombrePrueba.length() <= 25
+						&& !ProgramProperties.espectaculos
+								.contains(nombrePrueba)) {
 					nombre = nombrePrueba;
 				} else {
-					System.out.println("ese nombre es demasiado largo o ya existe.");
+					System.out.println(
+							"ese nombre es demasiado largo o ya existe.");
 					nombre = null;
 				}
 			} while (nombre == null);
 			try {
 				do {
-					System.out.println("introduce la fecha de inicio (formato yyyy-mm-dd)");
+					System.out.println(
+							"introduce la fecha de inicio (formato yyyy-mm-dd)");
 					String fecha1 = leer.nextLine();
 					fechaIni = LocalDate.parse(fecha1);
 
@@ -223,17 +250,20 @@ public class Principal {
 					fechaFin = LocalDate.parse(fecha2);
 
 					if (fechaFin.isBefore(fechaIni)) {
-						System.out.println("La fecha final no puede ser anterior a la inicial.");
+						System.out.println(
+								"La fecha final no puede ser anterior a la inicial.");
 						fechas = false;
 					} else if (fechaFin.isAfter(fechaIni.plusYears(1))) {
-						System.out.println("El periodo no puede ser superior a 1 año.");
+						System.out.println(
+								"El periodo no puede ser superior a 1 año.");
 						fechas = false;
 					} else {
 						fechas = true;
 					}
 				} while (fechas == false);
 			} catch (DateTimeParseException e) {
-				System.out.println("fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
+				System.out.println(
+						"fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
 			}
 			Numero numero1 = new Numero("noche magica", 15.00);
 			Numero numero2 = new Numero("sonidos del aire", 12.5);
@@ -243,22 +273,28 @@ public class Principal {
 			numeros.add(numero3);
 			long id = espectaculos.size() + 1;
 			Coordinador coordinadorActual = (Coordinador) actual.getUsuActual();
-			nuevoEspectaculo = new Espectaculo(id, nombre, fechaIni, fechaFin, numeros, coordinadorActual);
+			nuevoEspectaculo = new Espectaculo(id, nombre, fechaIni, fechaFin,
+					numeros, coordinadorActual);
 			System.out.println("Espectaculo creado con exito.");
 		} else {
 			do {
-				System.out.println("introduce el nombre del espectaculo" + "\n(debe tener un maximo de 25 caracteres)");
+				System.out.println("introduce el nombre del espectaculo"
+						+ "\n(debe tener un maximo de 25 caracteres)");
 				nombrePrueba = leer.nextLine();
-				if (nombrePrueba.length() <= 25 && !ProgramProperties.espectaculos.contains(nombrePrueba)) {
+				if (nombrePrueba.length() <= 25
+						&& !ProgramProperties.espectaculos
+								.contains(nombrePrueba)) {
 					nombre = nombrePrueba;
 				} else {
-					System.out.println("ese nombre es demasiado largo o ya existe.");
+					System.out.println(
+							"ese nombre es demasiado largo o ya existe.");
 					nombre = null;
 				}
 			} while (nombre == null);
 			do {
 				try {
-					System.out.println("introduce la fecha de inicio (formato yyyy-mm-dd)");
+					System.out.println(
+							"introduce la fecha de inicio (formato yyyy-mm-dd)");
 					String fecha1 = leer.nextLine();
 					fechaIni = LocalDate.parse(fecha1);
 
@@ -268,16 +304,19 @@ public class Principal {
 					fechaFin = LocalDate.parse(fecha2);
 
 					if (fechaFin.isBefore(fechaIni)) {
-						System.out.println("La fecha final no puede ser anterior a la inicial.");
+						System.out.println(
+								"La fecha final no puede ser anterior a la inicial.");
 						fechas = false;
 					} else if (fechaFin.isAfter(fechaIni.plusYears(1))) {
-						System.out.println("El periodo no puede ser superior a 1 año.");
+						System.out.println(
+								"El periodo no puede ser superior a 1 año.");
 						fechas = false;
 					} else {
 						fechas = true;
 					}
 				} catch (DateTimeParseException e) {
-					System.out.println("fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
+					System.out.println(
+							"fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
 				}
 			} while (fechas == false);
 
@@ -287,9 +326,10 @@ public class Principal {
 			numeros.add(numero1);
 			numeros.add(numero2);
 			numeros.add(numero3);
-			long idEspectaculo = espectaculos.size()+1;
+			long idEspectaculo = espectaculos.size() + 1;
 
-			System.out.println("Elige un coordinador de los siguientes escribiendo su numero:");
+			System.out.println(
+					"Elige un coordinador de los siguientes escribiendo su numero:");
 			Boolean elegido = false;
 			Coordinador coordinadorElegido = null;
 			Boolean coordinadorEncontrado = false;
@@ -312,10 +352,13 @@ public class Principal {
 				} while (!v);
 
 				for (Persona c : credencialesSistema) {
-					if (c.getPerfil() == Perfil.COORDINACION && c.getId() == numCoor) {
+					if (c.getPerfil() == Perfil.COORDINACION
+							&& c.getId() == numCoor) {
 						if (c instanceof Coordinador) {
-							coordinadorElegido = new Coordinador(c.getId(), c.getEmail(), nombre, c.getNacionalidad(), c.getCredenciales());
-							coordinadorEncontrado=true;
+							coordinadorElegido = new Coordinador(c.getId(),
+									c.getEmail(), nombre, c.getNacionalidad(),
+									c.getCredenciales());
+							coordinadorEncontrado = true;
 							elegido = true;
 							break;
 						}
@@ -327,7 +370,8 @@ public class Principal {
 				}
 				System.out.println("Espectaculo creado.");
 			} while (!elegido);
-			nuevoEspectaculo = new Espectaculo(idEspectaculo, nombre, fechaIni, fechaFin, numeros, coordinadorElegido);
+			nuevoEspectaculo = new Espectaculo(idEspectaculo, nombre, fechaIni,
+					fechaFin, numeros, coordinadorElegido);
 		}
 
 		return nuevoEspectaculo;
@@ -338,7 +382,8 @@ public class Principal {
 		File archivo = new File(ProgramProperties.espectaculos);
 		if (!archivo.exists()) {
 			try (ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(ProgramProperties.espectaculos, true))) {
+					new FileOutputStream(ProgramProperties.espectaculos,
+							true))) {
 				oos.writeObject(espectaculos);
 				oos.close();
 			} catch (FileNotFoundException e) {
@@ -347,7 +392,8 @@ public class Principal {
 				System.out.println("Error de escritura del archivo");
 			}
 		} else {
-			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ProgramProperties.espectaculos))) {
+			try (ObjectInputStream ois = new ObjectInputStream(
+					new FileInputStream(ProgramProperties.espectaculos))) {
 
 				espectaculos = (ArrayList<Espectaculo>) ois.readObject();
 				ois.close();
@@ -369,14 +415,16 @@ public class Principal {
 
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
 		espectaculos = cargarEspectaculos();
-	
-		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ProgramProperties.espectaculos))) {
+
+		try (ObjectOutputStream oos = new ObjectOutputStream(
+				new FileOutputStream(ProgramProperties.espectaculos))) {
 			espectaculos.add(aGuardar);
 			oos.writeObject(espectaculos);
 			System.out.println("archivo modificado.");
 
 		} catch (FileNotFoundException e) {
-			System.out.println("no se pudo encontrar el archivo de espectaculos");
+			System.out
+					.println("no se pudo encontrar el archivo de espectaculos");
 		} catch (IOException e) {
 			System.out.println("error al escribir el archivo de espectaculos");
 			e.printStackTrace();
@@ -389,10 +437,9 @@ public class Principal {
 		ArrayList<String> lineas = leerFichero(ProgramProperties.credenciales);
 
 		for (String linea : lineas) {
-			if(linea.contains("coordinacion")) {
+			if (linea.contains("coordinacion")) {
 				personas.add(new Coordinador(linea));
-			}
-			else if(linea.contains("artista")) {
+			} else if (linea.contains("artista")) {
 				personas.add(new Artista(linea));
 			}
 		}
@@ -410,7 +457,8 @@ public class Principal {
 				writer.close();
 			} else {
 
-				BufferedReader reader = new BufferedReader(new FileReader(ruta));
+				BufferedReader reader = new BufferedReader(
+						new FileReader(ruta));
 				String linea;
 				while ((linea = reader.readLine()) != null) {
 					lineas.add(linea);
@@ -439,8 +487,10 @@ public class Principal {
 			password = leer.nextLine();
 		} while (password == null);
 
-		if (usuario.equals(ProgramProperties.usuarioAdmin) && password.equals(ProgramProperties.passwordAdmin)) {
-			usuarioLogueado = new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin);
+		if (usuario.equals(ProgramProperties.usuarioAdmin)
+				&& password.equals(ProgramProperties.passwordAdmin)) {
+			usuarioLogueado = new Persona(ProgramProperties.usuarioAdmin,
+					ProgramProperties.passwordAdmin);
 		} else {
 			for (Persona p : credenciales) {
 				if (p.getCredenciales().getNombre().equals(usuario)
@@ -460,15 +510,16 @@ public class Principal {
 	// MENUS
 	// MENU COORDINACION
 	/**
-	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar espectaculo
-	 * 2.2 crear-modificar numero 2.3 asignar artistas 3. Log OUT
+	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar
+	 * espectaculo 2.2 crear-modificar numero 2.3 asignar artistas 3. Log OUT
 	 */
 	public static void menuCoordinacion() {
 		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
-			System.out.println("Menu COORDINACION\nElige una opcion: \n\t1. Ver espectaculos\n\t.2 "
-					+ "Crear o Modificar espectaculos\n\t3. Log OUT\n\t4. Salir");
+			System.out.println(
+					"Menu COORDINACION\nElige una opcion: \n\t1. Ver espectaculos\n\t.2 "
+							+ "Crear o Modificar espectaculos\n\t3. Log OUT\n\t4. Salir");
 			Boolean v = false;
 			do {
 				try {
@@ -493,7 +544,8 @@ public class Principal {
 			case 4:
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida."
+						+ " Por favor intentalo de nuevo.");
 			}
 
 		} while (opcion != 4);
@@ -507,7 +559,9 @@ public class Principal {
 		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
-			System.out.println("Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver " + "espectaculos\n\t3. Log OUT");
+			System.out
+					.println("Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver "
+							+ "espectaculos\n\t3. Log OUT");
 			Boolean v = false;
 			do {
 				try {
@@ -522,7 +576,8 @@ public class Principal {
 
 			switch (opcion) {
 			case 1:
-				System.out.println("--Ficha del artista--\nNombre: " + actual.getUsuActual().getNombre() + "\nID: "
+				System.out.println("--Ficha del artista--\nNombre: "
+						+ actual.getUsuActual().getNombre() + "\nID: "
 						+ actual.getUsuActual().getId());
 
 				break;
@@ -534,7 +589,8 @@ public class Principal {
 
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida."
+						+ " Por favor intentalo de nuevo.");
 			}
 
 		} while (opcion != 3);
@@ -542,18 +598,20 @@ public class Principal {
 
 	// MENU ADMIN
 	/**
-	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar espectaculo
-	 * 2.2 crear-modificar numero 2.3 asignar artistas 3. gestionar personas y
-	 * credenciales 3.1 registrar persona 3.2 asignar perfil y credenciales 3.3
-	 * gestionar datos artista-coordinador 4. Log OUT
+	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar
+	 * espectaculo 2.2 crear-modificar numero 2.3 asignar artistas 3. gestionar
+	 * personas y credenciales 3.1 registrar persona 3.2 asignar perfil y
+	 * credenciales 3.3 gestionar datos artista-coordinador 4. Log OUT
 	 */
 	public static void menuAdmin() {
 		int opcion = -1;
 
 		mostrarMenuSesion(actual);
 		do {
-			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Gestionar espectaculos"
-					+ "\n\t3. Gestionar personas y credenciales" + "\n\t4. Log OUT" + "\n\t5. Salir");
+			System.out.println("Elige una opcion: \n\t1. Ver espectaculos"
+					+ "\n\t2. Gestionar espectaculos"
+					+ "\n\t3. Gestionar personas y credenciales"
+					+ "\n\t4. Log OUT" + "\n\t5. Salir");
 
 			Boolean v = false;
 			do {
@@ -584,7 +642,8 @@ public class Principal {
 			case 5:
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida."
+						+ " Por favor intentalo de nuevo.");
 			}
 		} while (opcion != 5);
 	}
@@ -594,7 +653,8 @@ public class Principal {
 		Persona nueva = null;
 		do {
 			System.out.println("Que deseas hacer?");
-			System.out.println("\t.1 Registrar persona\n\t.2" + "Gestionar datos artista o coordinador\n\t3. Salir");
+			System.out.println("\t.1 Registrar persona\n\t.2"
+					+ "Gestionar datos artista o coordinador\n\t3. Salir");
 
 			Boolean v = false;
 			do {
@@ -635,7 +695,8 @@ public class Principal {
 		int opcion2 = -1;
 		do {
 			System.out.println("Que deseas hacer?");
-			System.out.println("\t1. Crear o modificar un espectaculo\n\t2. " + "Crear o modificar un numero\n\t3. "
+			System.out.println("\t1. Crear o modificar un espectaculo\n\t2. "
+					+ "Crear o modificar un numero\n\t3. "
 					+ "Asignar artistas\n\t4. Salir");
 			Boolean v = false;
 			do {
@@ -741,7 +802,8 @@ public class Principal {
 				switch (num2) {
 				case 1:
 					senior = true;
-					System.out.println("desde que fecha es senior? (formato yyyy-mm-dd)");
+					System.out.println(
+							"desde que fecha es senior? (formato yyyy-mm-dd)");
 					fecha = LocalDate.parse(leer.nextLine());
 					break;
 				case 2:
@@ -783,7 +845,8 @@ public class Principal {
 					break;
 				}
 				int i = 1;
-				System.out.println("indica los numeros de sus especialidades separados por comas: ");
+				System.out.println(
+						"indica los numeros de sus especialidades separados por comas: ");
 				for (Especialidad e : Especialidad.values()) {
 					System.out.println(i + "-" + e);
 					i++;
@@ -797,12 +860,16 @@ public class Principal {
 							int elegida = Integer.parseInt(s.trim());
 							b = true;
 							switch (elegida) {
-							case 1 -> especialidadesUsu.add(Especialidad.ACROBACIA);
+							case 1 ->
+								especialidadesUsu.add(Especialidad.ACROBACIA);
 							case 2 -> especialidadesUsu.add(Especialidad.HUMOR);
 							case 3 -> especialidadesUsu.add(Especialidad.MAGIA);
-							case 4 -> especialidadesUsu.add(Especialidad.EQUILIBRISMO);
-							case 5 -> especialidadesUsu.add(Especialidad.MALABARISMO);
-							default -> System.out.println("Has introducido una opcion invalida");
+							case 4 -> especialidadesUsu
+									.add(Especialidad.EQUILIBRISMO);
+							case 5 ->
+								especialidadesUsu.add(Especialidad.MALABARISMO);
+							default -> System.out.println(
+									"Has introducido una opcion invalida");
 							}
 						} catch (NumberFormatException e) {
 							System.out.println("debes introducir numeros");
@@ -824,8 +891,9 @@ public class Principal {
 		 */
 
 		do {
-			System.out.println("introduce el nombre de usuario (ten en cuenta que "
-					+ "no admitira letras con tildes o dieresis, ni espacios en blanco)");
+			System.out.println(
+					"introduce el nombre de usuario (ten en cuenta que "
+							+ "no admitira letras con tildes o dieresis, ni espacios en blanco)");
 			String cadena = leer.nextLine().trim();
 
 			if (cadena.matches("^[a-zA-Z_-]{3,}$")) {
@@ -835,17 +903,20 @@ public class Principal {
 		} while (nombreUsuario == null);
 
 		do {
-			System.out.println("por ultimo introduce una contraseña valida (debe"
-					+ " tener mas de 2 caracteres, y ningun espacio en blanco");
+			System.out
+					.println("por ultimo introduce una contraseña valida (debe"
+							+ " tener mas de 2 caracteres, y ningun espacio en blanco");
 			String pass = leer.nextLine();
 			if (pass.matches("^\\S{3,}$")) {
 				passUsuario = pass;
 			} else
 				System.out.println("contraseña no valida");
 		} while (passUsuario == null);
-		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario, perfilUsu);
+		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario,
+				perfilUsu);
 
-		return resultadoLogin = new Persona(-1, email, nombreUsuario, nacionalidad, credenciales, perfilUsu);
+		return resultadoLogin = new Persona(-1, email, nombreUsuario,
+				nacionalidad, credenciales, perfilUsu);
 	}
 
 	public static void persistirCredenciales() {
@@ -887,14 +958,28 @@ public class Principal {
 	}
 
 	public static void mostrarEspectaculos() {
-		if (ProgramProperties.espectaculos == null || ProgramProperties.espectaculos.isEmpty()) {
+		ArrayList<Espectaculo> listaEspectaculos = new ArrayList<>();
+		if (ProgramProperties.espectaculos == null
+				|| ProgramProperties.espectaculos.isEmpty()) {
 			System.out.println("No hay espectáculos disponibles.");
 			return;
 		}
 
-		System.out.println("---- Lista de espectáculos ----");
-		for (Espectaculo e : espectaculos) {
-			System.out.println(e.getNombre() + ", desde " + e.getFechaini() + " hasta " + e.getFechafin());
+		try (ObjectInputStream ois = new ObjectInputStream(
+				new FileInputStream(ProgramProperties.espectaculos))) {
+			for (Espectaculo e : espectaculos) {
+				listaEspectaculos.add(e);
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		for (Espectaculo e : listaEspectaculos) {
+			System.out.println(e);
 		}
 	}
+
 }
