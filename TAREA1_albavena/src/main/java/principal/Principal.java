@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.*;
 
 import entidades.Persona;
+import entidades.Artista;
 import entidades.Coordinador;
 import entidades.Credenciales;
 import entidades.Especialidad;
@@ -290,7 +291,7 @@ public class Principal {
 
 			System.out.println("Elige un coordinador de los siguientes escribiendo su numero:");
 			Boolean elegido = false;
-			Coordinador coordinadorElegido;
+			Coordinador coordinadorElegido = null;
 			Boolean coordinadorEncontrado = false;
 			do {
 				for (Persona c : credencialesSistema) {
@@ -312,8 +313,8 @@ public class Principal {
 
 				for (Persona c : credencialesSistema) {
 					if (c.getPerfil() == Perfil.COORDINACION && c.getId() == numCoor) {
-						if (c instanceof Persona) {
-							coordinadorElegido = new Coordinador(idEspectaculo, c.getEmail(), nombre, c.getNacionalidad(), c.getCredenciales());
+						if (c instanceof Coordinador) {
+							coordinadorElegido = new Coordinador(c.getId(), c.getEmail(), nombre, c.getNacionalidad(), c.getCredenciales());
 							coordinadorEncontrado=true;
 							elegido = true;
 							break;
@@ -321,10 +322,11 @@ public class Principal {
 					}
 
 				}
-				if (coordinadorEncontrado = false) {
+				if (!coordinadorEncontrado) {
 					System.out.println("no se ha encontrado ese coordinador.");
 				}
-			} while (elegido);
+				System.out.println("Espectaculo creado.");
+			} while (!elegido);
 			nuevoEspectaculo = new Espectaculo(idEspectaculo, nombre, fechaIni, fechaFin, numeros, coordinadorElegido);
 		}
 
@@ -366,15 +368,16 @@ public class Principal {
 
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
 		espectaculos = cargarEspectaculos();
+	
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ProgramProperties.espectaculos))) {
 			espectaculos.add(aGuardar);
 			oos.writeObject(espectaculos);
 			System.out.println("archivo modificado.");
 
 		} catch (FileNotFoundException e) {
-			System.out.println("no se pudo encontrar el archivo");
+			System.out.println("no se pudo encontrar el archivo de espectaculos");
 		} catch (IOException e) {
-			System.out.println("error al escribir el archivo");
+			System.out.println("error al escribir el archivo de espectaculos");
 		}
 	}
 
@@ -384,7 +387,12 @@ public class Principal {
 		ArrayList<String> lineas = leerFichero(ProgramProperties.credenciales);
 
 		for (String linea : lineas) {
-			personas.add(new Persona(linea));
+			if(linea.contains("coordinacion")) {
+				personas.add(new Coordinador(linea));
+			}
+			else if(linea.contains("artista")) {
+				personas.add(new Artista(linea));
+			}
 		}
 		return personas;
 	}

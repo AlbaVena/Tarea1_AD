@@ -13,6 +13,16 @@ public class Artista extends Persona {
 			Credenciales credenciales) {
 		super(id, email, nombre, nacionalidad, credenciales, Perfil.ARTISTA);
 	}
+	public Artista (String linea) {
+		super();
+		String[] propiedades = linea.split("\\|");
+		this.id = Long.parseLong(propiedades[0]);
+		this.credenciales = new Credenciales(propiedades[1], propiedades[2]);
+		this.email = propiedades[3];
+		this.nombre = propiedades[4];
+		this.nacionalidad = propiedades[5];
+		this.perfil=Perfil.ARTISTA;
+}
 
 	public Artista(long id, String email, String nombre, String nacionalidad,
 			Credenciales credenciales, long idArt, String apodo,
