@@ -338,7 +338,7 @@ public class Principal {
 		File archivo = new File(ProgramProperties.espectaculos);
 		if (!archivo.exists()) {
 			try (ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(ProgramProperties.espectaculos))) {
+					new FileOutputStream(ProgramProperties.espectaculos, true))) {
 				oos.writeObject(espectaculos);
 				oos.close();
 			} catch (FileNotFoundException e) {
@@ -352,9 +352,10 @@ public class Principal {
 				espectaculos = (ArrayList<Espectaculo>) ois.readObject();
 				ois.close();
 			} catch (FileNotFoundException e) {
-				System.out.println("archivo no encontrado");
+				System.out.println("archivo espectaculos no encontrado");
 			} catch (IOException e) {
-				System.out.println("error de lectura del archivo");
+				System.out.println("error de lectura del archivo al cargar");
+				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
 				System.out.println("error de conversion de tipos.");
 			}
@@ -378,6 +379,7 @@ public class Principal {
 			System.out.println("no se pudo encontrar el archivo de espectaculos");
 		} catch (IOException e) {
 			System.out.println("error al escribir el archivo de espectaculos");
+			e.printStackTrace();
 		}
 	}
 

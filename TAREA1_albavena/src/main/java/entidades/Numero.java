@@ -1,8 +1,13 @@
 package entidades;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public class Numero {
+public class Numero implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long id;
 	private int orden;
 	private String nombre;

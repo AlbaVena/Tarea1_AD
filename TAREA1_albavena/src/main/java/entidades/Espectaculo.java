@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public class Espectaculo implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long id;
 	private String nombre;
 	private LocalDate fechaini;

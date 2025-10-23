@@ -1,10 +1,15 @@
 package entidades;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class Coordinador extends Persona {
+public class Coordinador extends Persona implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long idCoord;
 	private boolean senior = false;
 	private LocalDate fechasenior = null;
@@ -65,6 +70,13 @@ public class Coordinador extends Persona {
 
 	public void setEspectaculos(Set<Espectaculo> espectaculos) {
 		this.espectaculos = espectaculos;
+	}
+
+	@Override
+	public String toString() {
+		return "Coordinador [idCoord=" + idCoord + ", senior=" + senior
+				+ ", fechasenior=" + fechasenior + ", espectaculos="
+				+ espectaculos + "]";
 	}
 	
 	

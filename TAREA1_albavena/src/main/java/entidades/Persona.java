@@ -1,6 +1,12 @@
 package entidades;
 
-public class Persona {
+import java.io.Serializable;
+
+public class Persona implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected long id;
 	protected String email;
 	protected String nombre;
@@ -106,6 +112,15 @@ public class Persona {
 		 
 		return id+"|"+credenciales.getNombre()+"|"+credenciales.getPassword()+
 				"|"+email+"|"+nombre+"|"+nacionalidad+"|"+perfil;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "Persona [id=" + id + ", email=" + email + ", nombre=" + nombre
+				+ ", nacionalidad=" + nacionalidad + ", credenciales="
+				+ credenciales + ", perfil=" + perfil + "]";
 	}
 
 	
