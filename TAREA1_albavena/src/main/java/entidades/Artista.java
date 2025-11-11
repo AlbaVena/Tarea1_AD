@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Artista extends Persona {
+	private static final long serialVersionUID = 1L;
 	private long idArt;
 	private String apodo = null;
 	private Set<Especialidad> especialidades;

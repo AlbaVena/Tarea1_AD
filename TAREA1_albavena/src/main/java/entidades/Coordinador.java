@@ -28,7 +28,6 @@ public class Coordinador extends Persona implements Serializable {
 
 	public Coordinador(long id, String email, String nombre, String nacionalidad, Credenciales credenciales) {
 		super(id, email, nombre, nacionalidad, credenciales, Perfil.COORDINACION);
-		// TODO Auto-generated constructor stub
 	}
 
 	public Coordinador(long id, String email, String nombre, String nacionalidad, Credenciales credenciales,

@@ -67,9 +67,7 @@ public class Principal {
 		Boolean v = false;
 		do {
 			mostrarMenuSesion(actual);
-			System.out
-					.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. "
-							+ "Log IN\n\t3. Salir");
+			System.out.println("Elige una opcion: \n\t1. Ver espectaculos\n\t2. " + "Log IN\n\t3. Salir");
 
 			do {
 				try {
@@ -114,8 +112,7 @@ public class Principal {
 				System.out.println("Cerrando el programa...");
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida."
-						+ " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
 
 			}
 		} while (opcion != 3);
@@ -137,8 +134,7 @@ public class Principal {
 
 	private static void cargarProperties() {
 		Properties p = new Properties();
-		try (InputStream input = Principal.class.getClassLoader()
-				.getResourceAsStream("application.properties")) {
+		try (InputStream input = Principal.class.getClassLoader().getResourceAsStream("application.properties")) {
 			p.load(input);
 
 			ProgramProperties.usuarioAdmin = p.getProperty("usuarioAdmin");
@@ -150,8 +146,7 @@ public class Principal {
 		} catch (FileNotFoundException e) {
 			System.out.println("No pude encontrar el fichero de properties");
 		} catch (IOException e) {
-			System.out
-					.println("Hubo problemas al leer el fichero de properties");
+			System.out.println("Hubo problemas al leer el fichero de properties");
 		}
 	}
 
@@ -159,8 +154,7 @@ public class Principal {
 		Map<String, String> paises = new HashMap<String, String>();
 
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document documento = builder.parse(ProgramProperties.paises);
 			documento.getDocumentElement().normalize();
 
@@ -197,8 +191,7 @@ public class Principal {
 		}
 
 		catch (Exception e) {
-			System.out.println(
-					"Ha ocurrido algun problema al leer el archivo XML.");
+			System.out.println("Ha ocurrido algun problema al leer el archivo XML.");
 		}
 
 		return paises;
@@ -206,12 +199,19 @@ public class Principal {
 
 	private static String getNodo(String etiqueta, Element elem) { // "etiqueta"
 																	// concreta
-		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0)
-				.getChildNodes(); // busca todas las qtiquetas hijas
-									// con el nombre de la etiqueta
+		NodeList nodo = elem.getElementsByTagName(etiqueta).item(0).getChildNodes(); // busca todas las qtiquetas hijas
+																						// con el nombre de la etiqueta
 		// devuelve los nodos hijos
 		Node valorNodo = nodo.item(0); // primer hijo ID
 		return valorNodo.getNodeValue(); // el nodo de TEXTO (valor real) NOMBRE
+	}
+
+	private static boolean comprobarEspectaculoRepetido(String espNombre) {
+		for (Espectaculo e : espectaculos) {
+			if (e.getNombre().equals(espNombre))
+				return true;
+		}
+		return false;
 	}
 
 	public static Espectaculo crearEspectaculo() {
@@ -224,23 +224,18 @@ public class Principal {
 
 		if (actual.getPerfilActual() == Perfil.COORDINACION) {
 			do {
-				System.out.println("introduce el nombre del espectaculo"
-						+ "\n(debe tener un maximo de 25 caracteres)");
+				System.out.println("introduce el nombre del espectaculo" + "\n(debe tener un maximo de 25 caracteres)");
 				nombrePrueba = leer.nextLine();
-				if (nombrePrueba.length() <= 25
-						&& !ProgramProperties.espectaculos
-								.contains(nombrePrueba)) {
+				if (nombrePrueba.length() <= 25 && !comprobarEspectaculoRepetido(nombrePrueba)) {
 					nombre = nombrePrueba;
 				} else {
-					System.out.println(
-							"ese nombre es demasiado largo o ya existe.");
+					System.out.println("ese nombre es demasiado largo o ya existe.");
 					nombre = null;
 				}
 			} while (nombre == null);
 			try {
 				do {
-					System.out.println(
-							"introduce la fecha de inicio (formato yyyy-mm-dd)");
+					System.out.println("introduce la fecha de inicio (formato yyyy-mm-dd)");
 					String fecha1 = leer.nextLine();
 					fechaIni = LocalDate.parse(fecha1);
 
@@ -250,20 +245,17 @@ public class Principal {
 					fechaFin = LocalDate.parse(fecha2);
 
 					if (fechaFin.isBefore(fechaIni)) {
-						System.out.println(
-								"La fecha final no puede ser anterior a la inicial.");
+						System.out.println("La fecha final no puede ser anterior a la inicial.");
 						fechas = false;
 					} else if (fechaFin.isAfter(fechaIni.plusYears(1))) {
-						System.out.println(
-								"El periodo no puede ser superior a 1 año.");
+						System.out.println("El periodo no puede ser superior a 1 año.");
 						fechas = false;
 					} else {
 						fechas = true;
 					}
 				} while (fechas == false);
 			} catch (DateTimeParseException e) {
-				System.out.println(
-						"fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
+				System.out.println("fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
 			}
 			Numero numero1 = new Numero("noche magica", 15.00);
 			Numero numero2 = new Numero("sonidos del aire", 12.5);
@@ -273,28 +265,22 @@ public class Principal {
 			numeros.add(numero3);
 			long id = espectaculos.size() + 1;
 			Coordinador coordinadorActual = (Coordinador) actual.getUsuActual();
-			nuevoEspectaculo = new Espectaculo(id, nombre, fechaIni, fechaFin,
-					numeros, coordinadorActual);
+			nuevoEspectaculo = new Espectaculo(id, nombre, fechaIni, fechaFin, numeros, coordinadorActual);
 			System.out.println("Espectaculo creado con exito.");
 		} else {
 			do {
-				System.out.println("introduce el nombre del espectaculo"
-						+ "\n(debe tener un maximo de 25 caracteres)");
+				System.out.println("introduce el nombre del espectaculo" + "\n(debe tener un maximo de 25 caracteres)");
 				nombrePrueba = leer.nextLine();
-				if (nombrePrueba.length() <= 25
-						&& !ProgramProperties.espectaculos
-								.contains(nombrePrueba)) {
+				if (nombrePrueba.length() <= 25 && !comprobarEspectaculoRepetido(nombrePrueba)) {
 					nombre = nombrePrueba;
 				} else {
-					System.out.println(
-							"ese nombre es demasiado largo o ya existe.");
+					System.out.println("ese nombre es demasiado largo o ya existe.");
 					nombre = null;
 				}
 			} while (nombre == null);
 			do {
 				try {
-					System.out.println(
-							"introduce la fecha de inicio (formato yyyy-mm-dd)");
+					System.out.println("introduce la fecha de inicio (formato yyyy-mm-dd)");
 					String fecha1 = leer.nextLine();
 					fechaIni = LocalDate.parse(fecha1);
 
@@ -304,19 +290,16 @@ public class Principal {
 					fechaFin = LocalDate.parse(fecha2);
 
 					if (fechaFin.isBefore(fechaIni)) {
-						System.out.println(
-								"La fecha final no puede ser anterior a la inicial.");
+						System.out.println("La fecha final no puede ser anterior a la inicial.");
 						fechas = false;
 					} else if (fechaFin.isAfter(fechaIni.plusYears(1))) {
-						System.out.println(
-								"El periodo no puede ser superior a 1 año.");
+						System.out.println("El periodo no puede ser superior a 1 año.");
 						fechas = false;
 					} else {
 						fechas = true;
 					}
 				} catch (DateTimeParseException e) {
-					System.out.println(
-							"fFormato de fecha incorrecto. Usa yyyy-mm-dd.");
+					System.out.println("Formato de fecha incorrecto. Usa yyyy-mm-dd.");
 				}
 			} while (fechas == false);
 
@@ -328,8 +311,7 @@ public class Principal {
 			numeros.add(numero3);
 			long idEspectaculo = espectaculos.size() + 1;
 
-			System.out.println(
-					"Elige un coordinador de los siguientes escribiendo su numero:");
+			System.out.println("Elige un coordinador de los siguientes escribiendo su numero:");
 			Boolean elegido = false;
 			Coordinador coordinadorElegido = null;
 			Boolean coordinadorEncontrado = false;
@@ -352,11 +334,9 @@ public class Principal {
 				} while (!v);
 
 				for (Persona c : credencialesSistema) {
-					if (c.getPerfil() == Perfil.COORDINACION
-							&& c.getId() == numCoor) {
+					if (c.getPerfil() == Perfil.COORDINACION && c.getId() == numCoor) {
 						if (c instanceof Coordinador) {
-							coordinadorElegido = new Coordinador(c.getId(),
-									c.getEmail(), nombre, c.getNacionalidad(),
+							coordinadorElegido = new Coordinador(c.getId(), c.getEmail(), nombre, c.getNacionalidad(),
 									c.getCredenciales());
 							coordinadorEncontrado = true;
 							elegido = true;
@@ -370,8 +350,7 @@ public class Principal {
 				}
 				System.out.println("Espectaculo creado.");
 			} while (!elegido);
-			nuevoEspectaculo = new Espectaculo(idEspectaculo, nombre, fechaIni,
-					fechaFin, numeros, coordinadorElegido);
+			nuevoEspectaculo = new Espectaculo(idEspectaculo, nombre, fechaIni, fechaFin, numeros, coordinadorElegido);
 		}
 
 		return nuevoEspectaculo;
@@ -382,8 +361,7 @@ public class Principal {
 		File archivo = new File(ProgramProperties.espectaculos);
 		if (!archivo.exists()) {
 			try (ObjectOutputStream oos = new ObjectOutputStream(
-					new FileOutputStream(ProgramProperties.espectaculos,
-							true))) {
+					new FileOutputStream(ProgramProperties.espectaculos, true))) {
 				oos.writeObject(espectaculos);
 				oos.close();
 			} catch (FileNotFoundException e) {
@@ -392,8 +370,7 @@ public class Principal {
 				System.out.println("Error de escritura del archivo");
 			}
 		} else {
-			try (ObjectInputStream ois = new ObjectInputStream(
-					new FileInputStream(ProgramProperties.espectaculos))) {
+			try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ProgramProperties.espectaculos))) {
 
 				espectaculos = (ArrayList<Espectaculo>) ois.readObject();
 				ois.close();
@@ -416,15 +393,13 @@ public class Principal {
 		ArrayList<Espectaculo> espectaculos = new ArrayList<Espectaculo>();
 		espectaculos = cargarEspectaculos();
 
-		try (ObjectOutputStream oos = new ObjectOutputStream(
-				new FileOutputStream(ProgramProperties.espectaculos))) {
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ProgramProperties.espectaculos))) {
 			espectaculos.add(aGuardar);
 			oos.writeObject(espectaculos);
 			System.out.println("archivo modificado.");
 
 		} catch (FileNotFoundException e) {
-			System.out
-					.println("no se pudo encontrar el archivo de espectaculos");
+			System.out.println("no se pudo encontrar el archivo de espectaculos");
 		} catch (IOException e) {
 			System.out.println("error al escribir el archivo de espectaculos");
 			e.printStackTrace();
@@ -457,8 +432,7 @@ public class Principal {
 				writer.close();
 			} else {
 
-				BufferedReader reader = new BufferedReader(
-						new FileReader(ruta));
+				BufferedReader reader = new BufferedReader(new FileReader(ruta));
 				String linea;
 				while ((linea = reader.readLine()) != null) {
 					lineas.add(linea);
@@ -487,10 +461,8 @@ public class Principal {
 			password = leer.nextLine();
 		} while (password == null);
 
-		if (usuario.equals(ProgramProperties.usuarioAdmin)
-				&& password.equals(ProgramProperties.passwordAdmin)) {
-			usuarioLogueado = new Persona(ProgramProperties.usuarioAdmin,
-					ProgramProperties.passwordAdmin);
+		if (usuario.equals(ProgramProperties.usuarioAdmin) && password.equals(ProgramProperties.passwordAdmin)) {
+			usuarioLogueado = new Persona(ProgramProperties.usuarioAdmin, ProgramProperties.passwordAdmin);
 		} else {
 			for (Persona p : credenciales) {
 				if (p.getCredenciales().getNombre().equals(usuario)
@@ -510,16 +482,15 @@ public class Principal {
 	// MENUS
 	// MENU COORDINACION
 	/**
-	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar
-	 * espectaculo 2.2 crear-modificar numero 2.3 asignar artistas 3. Log OUT
+	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar espectaculo
+	 * 2.2 crear-modificar numero 2.3 asignar artistas 3. Log OUT
 	 */
 	public static void menuCoordinacion() {
 		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
-			System.out.println(
-					"Menu COORDINACION\nElige una opcion: \n\t1. Ver espectaculos\n\t.2 "
-							+ "Crear o Modificar espectaculos\n\t3. Log OUT\n\t4. Salir");
+			System.out.println("Menu COORDINACION\nElige una opcion: \n\t1. Ver espectaculos\n\t.2 "
+					+ "Crear o Modificar espectaculos\n\t3. Log OUT\n\t4. Salir al meu anterior");
 			Boolean v = false;
 			do {
 				try {
@@ -540,12 +511,14 @@ public class Principal {
 				guardarEspectaculo(crearEspectaculo());
 				break;
 			case 3:
+				logOut();
 				break;
 			case 4:
+				logOut();
+				System.out.println("Saliendo al menu anterior...");
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida."
-						+ " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
 			}
 
 		} while (opcion != 4);
@@ -559,9 +532,7 @@ public class Principal {
 		int opcion = -1;
 		mostrarMenuSesion(actual);
 		do {
-			System.out
-					.println("Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver "
-							+ "espectaculos\n\t3. Log OUT");
+			System.out.println("Elige una opcion: \n\t1. Ver tu ficha\n\t2. Ver " + "espectaculos\n\t3. Log OUT");
 			Boolean v = false;
 			do {
 				try {
@@ -576,8 +547,7 @@ public class Principal {
 
 			switch (opcion) {
 			case 1:
-				System.out.println("--Ficha del artista--\nNombre: "
-						+ actual.getUsuActual().getNombre() + "\nID: "
+				System.out.println("--Ficha del artista--\nNombre: " + actual.getUsuActual().getNombre() + "\nID: "
 						+ actual.getUsuActual().getId());
 
 				break;
@@ -589,8 +559,7 @@ public class Principal {
 
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida."
-						+ " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
 			}
 
 		} while (opcion != 3);
@@ -598,20 +567,18 @@ public class Principal {
 
 	// MENU ADMIN
 	/**
-	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar
-	 * espectaculo 2.2 crear-modificar numero 2.3 asignar artistas 3. gestionar
-	 * personas y credenciales 3.1 registrar persona 3.2 asignar perfil y
-	 * credenciales 3.3 gestionar datos artista-coordinador 4. Log OUT
+	 * 1. ver espectaculos 2. gestionar espectaculos 2.1 crear-modificar espectaculo
+	 * 2.2 crear-modificar numero 2.3 asignar artistas 3. gestionar personas y
+	 * credenciales 3.1 registrar persona 3.2 asignar perfil y credenciales 3.3
+	 * gestionar datos artista-coordinador 4. Log OUT
 	 */
 	public static void menuAdmin() {
 		int opcion = -1;
 
 		mostrarMenuSesion(actual);
 		do {
-			System.out.println("Elige una opcion: \n\t1. Ver espectaculos"
-					+ "\n\t2. Gestionar espectaculos"
-					+ "\n\t3. Gestionar personas y credenciales"
-					+ "\n\t4. Log OUT" + "\n\t5. Salir");
+			System.out.println("Elige una opcion: \n\t1. Ver espectaculos" + "\n\t2. Gestionar espectaculos"
+					+ "\n\t3. Gestionar personas y credenciales" + "\n\t4. Log OUT" + "\n\t5. Salir al menu anterior");
 
 			Boolean v = false;
 			do {
@@ -638,12 +605,14 @@ public class Principal {
 				gestionarPersonas();
 				break;
 			case 4:
+				logOut();
 				break;
 			case 5:
+				logOut();
+				System.out.println("Saliendo al menu anterior...");
 				break;
 			default:
-				System.out.println("No has introducido una opcion valida."
-						+ " Por favor intentalo de nuevo.");
+				System.out.println("No has introducido una opcion valida." + " Por favor intentalo de nuevo.");
 			}
 		} while (opcion != 5);
 	}
@@ -653,8 +622,7 @@ public class Principal {
 		Persona nueva = null;
 		do {
 			System.out.println("Que deseas hacer?");
-			System.out.println("\t.1 Registrar persona\n\t.2"
-					+ "Gestionar datos artista o coordinador\n\t3. Salir");
+			System.out.println("\t1. Registrar persona\n\t2. " + "Gestionar datos artista o coordinador\n\t3. Salir al menu anterior");
 
 			Boolean v = false;
 			do {
@@ -673,15 +641,19 @@ public class Principal {
 
 				do {
 					nueva = registrarPersona();
-					nueva.setId(credencialesSistema.size() + 1);
-					credencialesSistema.add(nueva);
-					persistirCredenciales();
+					if (nueva != null) {
+						nueva.setId(credencialesSistema.size() + 1);
+						credencialesSistema.add(nueva);
+						persistirCredenciales();
+						System.out.println("Usuario registrado con éxito");
+					}
 				} while (nueva == null);
 				break;
 			case 2:
 
 				break;
 			case 3:
+				System.out.println("Saliendo al menu anterior...");
 				break;
 
 			default:
@@ -695,9 +667,8 @@ public class Principal {
 		int opcion2 = -1;
 		do {
 			System.out.println("Que deseas hacer?");
-			System.out.println("\t1. Crear o modificar un espectaculo\n\t2. "
-					+ "Crear o modificar un numero\n\t3. "
-					+ "Asignar artistas\n\t4. Salir");
+			System.out.println("\t1. Crear o modificar un espectaculo\n\t2. " + "Crear o modificar un numero\n\t3. "
+					+ "Asignar artistas\n\t4. Salir al menu anterior");
 			Boolean v = false;
 			do {
 				try {
@@ -721,6 +692,7 @@ public class Principal {
 			case 3:
 				break;
 			case 4:
+				System.out.println("Saliendo al menu anterior...");
 				break;
 			default:
 				System.out.println("no has introducido una opcion valida.");
@@ -751,22 +723,28 @@ public class Principal {
 		System.out.println("introduce el nombre de la persona");
 		nombre = leer.nextLine();
 
-		System.out.println("introduce el id del pais elegido");
-		for (Entry<String, String> entrada : paises.entrySet()) {
-			System.out.println(entrada);
+		boolean nac = false;
+		do {
+			System.out.println("introduce el id del pais elegido");
+			for (Entry<String, String> entrada : paises.entrySet()) {
+				System.out.println(entrada);
+			}
+			nacionalidad = leer.nextLine().toUpperCase();
+			if (paises.containsKey(nacionalidad)) {
+				nacionalidad = paises.get(nacionalidad);
+				nac = true;
+			} else {
+				System.out.println("Ese pais no se encuentra");
+			}
+			
 		}
-		nacionalidad = leer.nextLine().toUpperCase();
-		if (paises.containsKey(nacionalidad)) {
-			nacionalidad = paises.get(nacionalidad);
-		} else {
-			System.out.println("Ese pais no se encuentra");
-			return null;
-		}
+		while (!nac);
 
 		/*
 		 * DATOS PROFESIONALES
 		 */
 		int num = -1;
+		boolean validado = false;
 		do {
 			System.out.println("El usuario es Coordinador (1) o Artista (2)?");
 
@@ -783,31 +761,30 @@ public class Principal {
 			} while (!v);
 			switch (num) {
 			case 1:
-				// TODO arreglar menu coordinacion
 				perfilUsu = Perfil.COORDINACION;
 				int num2 = 0;
 				System.out.println("El coordinador es senior? (1- si , 2- no)");
-				Boolean vv = false;
+				Boolean valido1 = false;
 				do {
 					try {
 						num2 = leer.nextInt();
 						leer.nextLine();
-						v = true;
+						valido1 = true;
 					} catch (Exception e) {
 						System.out.println("debes introducir un numero");
 						leer.nextLine();
 					}
-				} while (!vv);
+				} while (!valido1);
 
 				switch (num2) {
 				case 1:
 					senior = true;
-					System.out.println(
-							"desde que fecha es senior? (formato yyyy-mm-dd)");
+					System.out.println("desde que fecha es senior? (formato yyyy-mm-dd)");
 					fecha = LocalDate.parse(leer.nextLine());
 					break;
 				case 2:
 					senior = false;
+					System.out.println("informacion senior guardada.");
 					break;
 				default:
 					System.out.println("no has elegido una opcion valida");
@@ -816,7 +793,7 @@ public class Principal {
 				break;
 
 			case 2:
-				// TODO arreglar menu artista
+
 				perfilUsu = Perfil.ARTISTA;
 				System.out.println("el artista tiene apodo? (1-si , 2-no)");
 				Boolean vvv = false;
@@ -825,7 +802,7 @@ public class Principal {
 					try {
 						num3 = leer.nextInt();
 						leer.nextLine();
-						v = true;
+						vvv = true;
 					} catch (Exception e) {
 						System.out.println("debes introducir un numero");
 						leer.nextLine();
@@ -845,8 +822,7 @@ public class Principal {
 					break;
 				}
 				int i = 1;
-				System.out.println(
-						"indica los numeros de sus especialidades separados por comas: ");
+				System.out.println("indica los numeros de sus especialidades separados por comas: ");
 				for (Especialidad e : Especialidad.values()) {
 					System.out.println(i + "-" + e);
 					i++;
@@ -860,16 +836,12 @@ public class Principal {
 							int elegida = Integer.parseInt(s.trim());
 							b = true;
 							switch (elegida) {
-							case 1 ->
-								especialidadesUsu.add(Especialidad.ACROBACIA);
+							case 1 -> especialidadesUsu.add(Especialidad.ACROBACIA);
 							case 2 -> especialidadesUsu.add(Especialidad.HUMOR);
 							case 3 -> especialidadesUsu.add(Especialidad.MAGIA);
-							case 4 -> especialidadesUsu
-									.add(Especialidad.EQUILIBRISMO);
-							case 5 ->
-								especialidadesUsu.add(Especialidad.MALABARISMO);
-							default -> System.out.println(
-									"Has introducido una opcion invalida");
+							case 4 -> especialidadesUsu.add(Especialidad.EQUILIBRISMO);
+							case 5 -> especialidadesUsu.add(Especialidad.MALABARISMO);
+							default -> System.out.println("Has introducido una opcion invalida");
 							}
 						} catch (NumberFormatException e) {
 							System.out.println("debes introducir numeros");
@@ -884,60 +856,61 @@ public class Principal {
 				System.out.println("La opcion elegida no es valida");
 				break;
 			}
-		} while (num != 1 || num != 2);
+			validado =true;
+		} while (!validado);
 
 		/**
 		 * DATOS DE CREDENCIALES
 		 */
 
 		do {
-			System.out.println(
-					"introduce el nombre de usuario (ten en cuenta que "
-							+ "no admitira letras con tildes o dieresis, ni espacios en blanco)");
+			System.out.println("introduce el nombre de usuario (ten en cuenta que "
+					+ "no admitira letras con tildes o dieresis, ni espacios en blanco)");
 			String cadena = leer.nextLine().trim();
 
 			if (cadena.matches("^[a-zA-Z_-]{3,}$")) {
 				nombreUsuario = cadena.toLowerCase();
+				if (cadena.equals("admin")) {
+					System.out.println("Ese nombre de usuario está reservado.");
+					nombreUsuario = null;
+				}
 			} else
 				System.out.println("ese nombre de usuario no es valido");
 		} while (nombreUsuario == null);
 
 		do {
-			System.out
-					.println("por ultimo introduce una contraseña valida (debe"
-							+ " tener mas de 2 caracteres, y ningun espacio en blanco");
+			System.out.println("por ultimo introduce una contraseña valida (debe"
+					+ " tener mas de 2 caracteres, y ningun espacio en blanco");
 			String pass = leer.nextLine();
-			if (pass.matches("^\\S{3,}$")) {
+			if (pass.matches("^[^|\\s]{3,}$")) {
 				passUsuario = pass;
 			} else
 				System.out.println("contraseña no valida");
 		} while (passUsuario == null);
-		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario,
-				perfilUsu);
+		Credenciales credenciales = new Credenciales(nombreUsuario, passUsuario, perfilUsu);
 
-		return resultadoLogin = new Persona(-1, email, nombreUsuario,
-				nacionalidad, credenciales, perfilUsu);
+		return resultadoLogin = new Persona(-1, email, nombreUsuario, nacionalidad, credenciales, perfilUsu);
 	}
 
 	public static void persistirCredenciales() {
 		try {
 			FileWriter writer = new FileWriter(ProgramProperties.credenciales);
+			String contenido = "";
 			for (Persona p : credencialesSistema) {
-				writer.write(p.toFicheroCredenciales());
+				contenido += p.toFicheroCredenciales()+"\n";
 			}
-
+			writer.write(contenido);
 			writer.close();
 		} catch (IOException e) {
 			System.out.println("error al escribir el archivo");
 		}
-		// TODO
 	}
 
 	public static Boolean comprobarEmail(String email) {
 		Boolean valido = true;
 		for (Persona p : credencialesSistema) {
 			if (p.getEmail() == email) {
-				// TODO rellenar mensaje error
+				System.out.println("Ese email ya está registrado en el sistema");
 				return false;
 			}
 		}
@@ -948,7 +921,7 @@ public class Principal {
 		Boolean valido = true;
 		for (Persona p : credencialesSistema) {
 			if (p.getCredenciales().getNombre() == nombreUsuario) {
-				// TODO rellenar mensaje error
+				System.out.println("Ese nombre ya existe");
 				return false;
 			}
 		}
@@ -959,22 +932,20 @@ public class Principal {
 
 	public static void mostrarEspectaculos() {
 		ArrayList<Espectaculo> listaEspectaculos = new ArrayList<>();
-		if (ProgramProperties.espectaculos == null
-				|| ProgramProperties.espectaculos.isEmpty()) {
+		if (espectaculos == null || espectaculos.isEmpty()) {
 			System.out.println("No hay espectáculos disponibles.");
 			return;
 		}
 
-		try (ObjectInputStream ois = new ObjectInputStream(
-				new FileInputStream(ProgramProperties.espectaculos))) {
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ProgramProperties.espectaculos))) {
 			for (Espectaculo e : espectaculos) {
 				listaEspectaculos.add(e);
 			}
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
+			System.out.println("Archivo de Espectaculos no encontrado");
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			System.out.println("Error de lectura o escritura del archivo Espectaculos");
 			e1.printStackTrace();
 		}
 		for (Espectaculo e : listaEspectaculos) {
